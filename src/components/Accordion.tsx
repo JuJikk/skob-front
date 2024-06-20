@@ -1,15 +1,14 @@
 import AccordionItem from "@/components/AccordionItem";
+import {firstSample} from "@/components/proba_json";
 
 const AccordionComp = () => {
   return (
-      <div>
-          <AccordionItem title={'qwerty'} description={"description"}/>
-          <AccordionItem title={'qwerty'} description={"description"}/>
-          <AccordionItem title={'qwerty'} description={"description"}/>
-          <AccordionItem title={'qwerty'} description={"description"}/>
-          <AccordionItem title={'qwerty'} description={"description"}/>
-          <AccordionItem title={'qwerty'} description={"description"}/>
-      </div>
+    <div>
+      {firstSample.map((obj, index) => {
+          return <AccordionItem item={obj} key={index} />
+
+      })}
+    </div>
   );
 };
 
