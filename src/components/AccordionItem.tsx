@@ -17,13 +17,14 @@ const AccordionItem = ({ item }: Props) => {
     setIsOpen(!isOpen);
   };
 
-  const handleCheckboxChange = (index: number) => () => {
-    if (usedIndex.includes(index)) {
-      setUsedIndex(usedIndex.filter((v) => v !== index));
-    } else {
-      setUsedIndex([...usedIndex, index]);
-    }
-  };
+  const handleCheckboxChange =
+    (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (e.target.checked) {
+        setUsedIndex([...usedIndex, index]);
+      } else {
+        setUsedIndex(usedIndex.filter((v) => v !== index));
+      }
+    };
 
   return (
     <div className="flex flex-col border-b border-gray-200 w-full lg:w-1/4 mx-auto">
@@ -48,15 +49,11 @@ const AccordionItem = ({ item }: Props) => {
       >
         <ol className="list-decimal pl-8">
           {item.items.map((subItem, index) => (
-            <div
-              key={index}
-              className="flex"
-              onClick={handleCheckboxChange(index)}
-            >
+            <div key={index} className="flex">
               <input
-                onChange={() => {}}
+                onChange={handleCheckboxChange(index)}
                 checked={usedIndex.includes(index)}
-                className="mb-auto mr-6 mt-1"
+                className="mb-auto mr-8 mt-1"
                 type="checkbox"
               />
               <li className={usedIndex.includes(index) ? "line-through" : ""}>
