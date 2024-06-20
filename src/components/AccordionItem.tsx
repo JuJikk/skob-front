@@ -17,22 +17,24 @@ const AccordionItem = ({ item }: Props) => {
     setIsOpen(!isOpen);
   };
 
-    const handleCheckboxChange =
-        (index: number) => () => {
-            if (usedIndex.includes(index)) {
-                setUsedIndex(usedIndex.filter((v) => v !== index));
-            } else {
-                setUsedIndex([...usedIndex, index]);
-            }
-        };
+  const handleCheckboxChange = (index: number) => () => {
+    if (usedIndex.includes(index)) {
+      setUsedIndex(usedIndex.filter((v) => v !== index));
+    } else {
+      setUsedIndex([...usedIndex, index]);
+    }
+  };
 
   return (
-    <div className="flex flex-col border-b border-gray-200 w-1/4 mx-auto">
+    <div className="flex flex-col border-b border-gray-200 w-full lg:w-1/4 mx-auto">
       <div
         className="flex justify-between items-center p-4 cursor-pointer"
         onClick={toggleAccordion}
       >
-        <span>{item.section}</span>
+        <span>
+          {item.section} ({usedIndex.length} / {item.items.length})
+        </span>
+        <span></span>
         <button>{isOpen ? "-" : "+"}</button>
       </div>
       <div
@@ -46,8 +48,13 @@ const AccordionItem = ({ item }: Props) => {
       >
         <ol className="list-decimal pl-8">
           {item.items.map((subItem, index) => (
-            <div key={index} className="flex" onClick={handleCheckboxChange(index)}>
+            <div
+              key={index}
+              className="flex"
+              onClick={handleCheckboxChange(index)}
+            >
               <input
+                onChange={() => {}}
                 checked={usedIndex.includes(index)}
                 className="mb-auto mr-6 mt-1"
                 type="checkbox"
