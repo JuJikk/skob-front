@@ -1,10 +1,11 @@
-import Accordion from "@/components/Accordion";
-
+import AddProbaButton from "@/components/Modal/AddProbaButton";
 
 export default function Home() {
   return (
     <>
-      <Accordion/>
+      {/*<Accordion/>*/}
+
+        <AddProbaButton/>
     </>
   );
 }
