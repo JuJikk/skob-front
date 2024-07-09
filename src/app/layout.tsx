@@ -4,11 +4,8 @@ import "./globals.css";
 import React from "react";
 import {
   ClerkProvider,
-  SignInButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
 } from "@clerk/nextjs";
+import {NavBar} from "@/components/navBar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,14 +23,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body className={inter.className}>
-          <SignedOut>
-            {" "}
-            <SignInButton />{" "}
-          </SignedOut>{" "}
-          <SignedIn>
-            {" "}
-            <UserButton />{" "}
-          </SignedIn>
+          <NavBar/>
           {children}
         </body>
       </html>

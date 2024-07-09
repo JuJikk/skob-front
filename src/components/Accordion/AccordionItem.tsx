@@ -1,11 +1,11 @@
-"use client";
+'use client'
 import React, { useState, useRef } from "react";
 
 type Props = {
-  item: {
-    section: string;
-    items: string[];
-  };
+    item: {
+        section: string;
+        items: string[];
+    };
 };
 
 const AccordionItem = ({ item }: Props) => {
@@ -35,12 +35,13 @@ const AccordionItem = ({ item }: Props) => {
         <span>
           {item.section} ({usedIndex.length} / {item.items.length})
         </span>
-        <span></span>
         <button>{isOpen ? "-" : "+"}</button>
       </div>
       <div
         ref={descriptionRef}
-        className={`overflow-hidden transition-all duration-200 ease-in-out ${isOpen ? "max-h-screen" : "max-h-0"}`}
+        className={`overflow-hidden transition-all duration-200 ease-in-out ${
+          isOpen ? "max-h-screen" : "max-h-0"
+        }`}
         style={{
           maxHeight: isOpen
             ? `${descriptionRef.current?.scrollHeight}px`
