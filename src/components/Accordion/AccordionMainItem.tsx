@@ -13,7 +13,7 @@ const AccordionMainItem = ({ step }: { step: Step }) => {
   };
 
   return (
-    <div className="flex flex-col border-b border-gray-200 w-full lg:w-1/4 mx-auto">
+    <div className="flex flex-col border-b border-gray-200 w-full mx-auto">
       <div
         className="flex justify-between items-center p-4 cursor-pointer"
         onClick={toggleAccordion}
