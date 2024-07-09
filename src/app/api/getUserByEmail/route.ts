@@ -1,8 +1,8 @@
 import dbConnect from "../../../utils/mongodb";
 import User from "../../../models/User";
-import { NextResponse } from "next/server";
+import {NextRequest, NextResponse} from "next/server";
 
-export async function GET(req: { url: string | URL }) {
+export async function GET(req: NextRequest) {
   await dbConnect();
 
   try {
