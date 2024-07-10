@@ -1,16 +1,32 @@
-import React, { useState } from "react";
+import React, { useReducer, useState } from "react";
 import AccordionItem from "@/components/Accordion/AccordionItem";
+import { ProbaData } from "@/types/accordion";
 
 interface Step {
   title: string;
   data: { section: string; items: string[] }[];
+  checked: ProbaData;
 }
+
+const mergeDataWithChecked = (data: any[], checked: ProbaData) => {
+  return data.map((sectionObj, index) => {
+    const sectionKey = String.fromCharCode(97 + index);
+    return {
+      section: sectionObj.section,
+      items: sectionObj.items,
+      checked: checked[sectionKey],
+    };
+  });
+};
 
 const AccordionMainItem = ({ step }: { step: Step }) => {
   const [isOpen, setIsOpen] = useState(false);
   const toggleAccordion = () => {
     setIsOpen(!isOpen);
   };
+  const [combinedData] = useReducer(mergeDataWithChecked, [], () =>
+    mergeDataWithChecked(step.data, step.checked),
+  );
 
   return (
     <div className="flex flex-col border-b border-gray-200 w-full mx-auto">
@@ -27,14 +43,12 @@ const AccordionMainItem = ({ step }: { step: Step }) => {
         }`}
       >
         <div className="pl-8">
-          {step.data.map(
-            (
-              obj: { section: string; items: string[] },
-              index: React.Key | null | undefined,
-            ) => (
-              <AccordionItem item={obj} key={index} />
-            ),
-          )}
+          {combinedData.map((obj, index) => (
+            <AccordionItem
+              item={obj}
+              key={index}
+            />
+          ))}
         </div>
       </div>
     </div>

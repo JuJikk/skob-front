@@ -1,5 +1,6 @@
 import CreateForm from "@/frontServices/createForm";
-import React, {ChangeEvent, Dispatch, SetStateAction, useState} from "react";
+import React, {ChangeEvent, Dispatch, SetStateAction, useEffect, useState} from "react";
+import { useUser } from "@clerk/nextjs";
 
 interface ModalWindowProps {
   setModal: Dispatch<SetStateAction<boolean>>;
@@ -9,6 +10,17 @@ interface ModalWindowProps {
 const ModalWindow: React.FC<ModalWindowProps> = ({ setModal, modal })=> {
   const [inputValue, setInputValue] = useState("");
   const [inputValueMail, setInputValueMail] = useState("");
+  const [currentUserEmail, setCurrentUserEmail] = useState<string>("");
+
+  const { user } = useUser();
+
+  useEffect(() => {
+    if (user?.emailAddresses && user.emailAddresses[0] && user.emailAddresses[0].emailAddress) {
+      setCurrentUserEmail(user.emailAddresses[0].emailAddress);
+    } else {
+      console.error("User email address is undefined");
+    }
+  },[user?.emailAddresses])
 
   const toggleModal = () => {
     setModal(!modal);
@@ -23,11 +35,15 @@ const ModalWindow: React.FC<ModalWindowProps> = ({ setModal, modal })=> {
   };
 
   const handleSubmit = () => {
-    toggleModal();
-    setModal(!modal);
-    setInputValue("");
-    setInputValueMail("");
-  }
+    if (currentUserEmail && inputValueMail && inputValue) {
+      CreateForm(inputValue, inputValueMail, currentUserEmail);
+      toggleModal();
+      setInputValue("");
+      setInputValueMail("");
+    } else {
+      console.error("User email address is undefined");
+    }
+  };
   return (
     <>
       {modal && (
@@ -65,7 +81,6 @@ const ModalWindow: React.FC<ModalWindowProps> = ({ setModal, modal })=> {
                 className="bg-red-500 text-white p-2 w-24"
                 onClick={() => {
                   handleSubmit();
-                  CreateForm(inputValue, inputValueMail);
                 }}
               >
                 Прийняти
