@@ -1,7 +1,7 @@
 import { updateProbaDataInDatabase } from '@/lib/db';
 import { NextResponse } from 'next/server';
 
-export async function POST(req: { json: () => any }) {
+export async function POST(req: Request ) {
   try {
     const body = await req.json();
     const { email, probaType, probaSubType, index, value } = body;
