@@ -1,4 +1,4 @@
-import React, { useReducer, useState } from "react";
+import React, { useState, useEffect } from "react";
 import AccordionItem from "@/components/Accordion/AccordionItem";
 import { ProbaData } from "@/types/accordion";
 
@@ -6,27 +6,40 @@ interface Step {
   title: string;
   data: { section: string; items: string[] }[];
   checked: ProbaData;
+  probaType: string;
 }
 
-const mergeDataWithChecked = (data: any[], checked: ProbaData) => {
+const mergeDataWithChecked = (
+  data: any[],
+  checked: ProbaData,
+  probaType: string,
+) => {
   return data.map((sectionObj, index) => {
     const sectionKey = String.fromCharCode(97 + index);
     return {
       section: sectionObj.section,
       items: sectionObj.items,
       checked: checked[sectionKey],
+      probaType,
     };
   });
 };
 
-const AccordionMainItem = ({ step }: { step: Step }) => {
+const AccordionMainItem = ({ step, currentProbaEmail}: { step: Step, currentProbaEmail: string }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [combinedData, setCombinedData] = useState(() =>
+    mergeDataWithChecked(step.data, step.checked, step.probaType),
+  );
+
+  useEffect(() => {
+    setCombinedData(
+      mergeDataWithChecked(step.data, step.checked, step.probaType),
+    );
+  }, [step.data, step.checked, step.probaType]);
+
   const toggleAccordion = () => {
     setIsOpen(!isOpen);
   };
-  const [combinedData] = useReducer(mergeDataWithChecked, [], () =>
-    mergeDataWithChecked(step.data, step.checked),
-  );
 
   return (
     <div className="flex flex-col border-b border-gray-200 w-full mx-auto">
@@ -44,10 +57,7 @@ const AccordionMainItem = ({ step }: { step: Step }) => {
       >
         <div className="pl-8">
           {combinedData.map((obj, index) => (
-            <AccordionItem
-              item={obj}
-              key={index}
-            />
+            <AccordionItem item={obj} key={index} currentProbaEmail={currentProbaEmail} currentStep={Object.keys(step.checked)[index]} />
           ))}
         </div>
       </div>

@@ -29,16 +29,19 @@ const AccordionComp: React.FC = () => {
             title: "Нульова проба",
             data: zeroSample,
             checked: data.data.zeroProba,
+            probaType: "zeroProba",
           },
           {
             title: "Перша проба",
             data: firstSample,
             checked: data.data.firstProba,
+            probaType: "firstProba",
           },
           {
             title: "Друга проба",
             data: secondSample,
             checked: data.data.secondProba,
+            probaType: "secondProba",
           },
         ]);
       }
@@ -67,7 +70,7 @@ const AccordionComp: React.FC = () => {
             {steps.map((step, index) => (
               <div className="flex" key={index}>
                 <li className="w-full">
-                  <AccordionMainItem step={step} />
+                  <AccordionMainItem step={step} currentProbaEmail={currentProbaEmail}/>
                 </li>
               </div>
             ))}

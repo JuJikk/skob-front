@@ -21,4 +21,5 @@ export interface Step {
     title: string;
     data: { section: string; items: string[] }[];
     checked: ProbaData;
+    probaType: string;
 }
