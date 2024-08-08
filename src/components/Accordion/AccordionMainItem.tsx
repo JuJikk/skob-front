@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
 import AccordionItem from "@/components/Accordion/AccordionItem";
 import { ProbaData } from "@/types/accordion";
+import { useEffect, useState } from "react";
 
 interface Step {
   title: string;
@@ -25,7 +25,13 @@ const mergeDataWithChecked = (
   });
 };
 
-const AccordionMainItem = ({ step, currentProbaEmail}: { step: Step, currentProbaEmail: string }) => {
+const AccordionMainItem = ({
+  step,
+  currentProbaEmail,
+}: {
+  step: Step;
+  currentProbaEmail: string;
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [combinedData, setCombinedData] = useState(() =>
     mergeDataWithChecked(step.data, step.checked, step.probaType),
@@ -57,7 +63,12 @@ const AccordionMainItem = ({ step, currentProbaEmail}: { step: Step, currentProb
       >
         <div className="pl-8">
           {combinedData.map((obj, index) => (
-            <AccordionItem item={obj} key={index} currentProbaEmail={currentProbaEmail} currentStep={Object.keys(step.checked)[index]} />
+            <AccordionItem
+              item={obj}
+              key={index}
+              currentProbaEmail={currentProbaEmail}
+              currentStep={Object.keys(step.checked)[index]}
+            />
           ))}
         </div>
       </div>

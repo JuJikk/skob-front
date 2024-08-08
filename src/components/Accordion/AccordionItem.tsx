@@ -1,7 +1,7 @@
 "use client";
-import React, { useState, useRef, useEffect } from "react";
-import axios from "axios";
 import ModalCheckWindow from "@/components/Modal/ModalCheckButton";
+import axios from "axios";
+import React, { useEffect, useRef, useState } from "react";
 
 type Props = {
     item: {
@@ -15,6 +15,7 @@ type Props = {
 };
 
 const AccordionItem = ({ item, currentProbaEmail, currentStep }: Props) => {
+  const [openLoader, setOpenLoader] = useState(false)
     const [isOpen, setIsOpen] = useState(false);
     const descriptionRef = useRef<HTMLDivElement>(null);
     const [indaxesSum, setIndaxesSum] = useState(0);
@@ -60,10 +61,13 @@ const AccordionItem = ({ item, currentProbaEmail, currentStep }: Props) => {
 
     const handleModalConfirm = () => {
         if (pendingIndex !== null && pendingChecked !== null) {
-            updateCheckedStatus(pendingIndex, pendingChecked);
-            setPendingIndex(null);
-            setPendingChecked(null);
-            setModal(false);
+          setOpenLoader(true)
+            updateCheckedStatus(pendingIndex, pendingChecked).then(() => {
+              setPendingIndex(null);
+              setPendingChecked(null);
+              setModal(false);
+              setOpenLoader(false)
+            });
         }
     };
 
@@ -71,6 +75,7 @@ const AccordionItem = ({ item, currentProbaEmail, currentStep }: Props) => {
         <div className="flex flex-col border-b border-gray-200 w-full lg:w-1/4 mx-auto">
             <ModalCheckWindow
                 modal={modal}
+                onLoading={openLoader}
                 setModal={setModal}
                 onConfirm={handleModalConfirm}
                 onCancel={() => setModal(false)}
