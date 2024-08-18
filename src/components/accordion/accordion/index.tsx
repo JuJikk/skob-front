@@ -1,11 +1,12 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import AccordionMainItem from "@/components/accordion/accordion-main-item";
-import findDataByEmail from "@/frontServices/find-data-by-email";
 import { Step, UserData } from "@/types/accordion";
 import { firstSample, secondSample, zeroSample } from "@/utils/const/probas";
+import {findDataByEmail} from "@/lib/data";
 
-const AccordionComp: React.FC = () => {
+const Accordion: React.FC = () => {
   const [currentProbaEmail, setCurrentProbaEmail] =
     useState<string>("wefwe@mail.com");
   const [userData, setUserData] = useState<UserData | undefined>();
@@ -85,4 +86,4 @@ const AccordionComp: React.FC = () => {
   );
 };
 
-export default AccordionComp;
+export default Accordion;

@@ -1,6 +1,6 @@
-import CreateForm from "@/frontServices/create-form";
 import {ChangeEvent, Dispatch, SetStateAction, useEffect, useState} from "react";
 import { useUser } from "@clerk/nextjs";
+import {createForm} from "@/lib/data";
 
 interface ModalWindowProps {
   setModal: Dispatch<SetStateAction<boolean>>;
@@ -36,7 +36,7 @@ const ModalWindow: React.FC<ModalWindowProps> = ({ setModal, modal })=> {
 
   const handleSubmit = () => {
     if (currentUserEmail && inputValueMail && inputValue) {
-      CreateForm(inputValue, inputValueMail, currentUserEmail);
+      createForm(inputValue, inputValueMail, currentUserEmail);
       toggleModal();
       setInputValue("");
       setInputValueMail("");
