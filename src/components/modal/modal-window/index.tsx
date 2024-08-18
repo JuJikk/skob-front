@@ -1,5 +1,5 @@
-import CreateForm from "@/frontServices/createForm";
-import React, {ChangeEvent, Dispatch, SetStateAction, useEffect, useState} from "react";
+import CreateForm from "@/frontServices/create-form";
+import {ChangeEvent, Dispatch, SetStateAction, useEffect, useState} from "react";
 import { useUser } from "@clerk/nextjs";
 
 interface ModalWindowProps {

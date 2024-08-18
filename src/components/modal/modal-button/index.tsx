@@ -1,6 +1,6 @@
 'use client'
-import ModalWindow from "@/components/Modal/modalWindow";
 import { useState } from "react";
+import ModalWindow from "@/components/modal/modal-window";
 
 const ModalButton = () => {
   const [modal, setModal] = useState(false);
