@@ -8,8 +8,24 @@ import { firstSample, secondSample, zeroSample } from "@/utils/const/probas";
 const AccordionComp: React.FC = () => {
   const [currentProbaEmail, setCurrentProbaEmail] =
     useState<string>("wefwe@mail.com");
+  const [allUsers, setAllUsers] = useState<any>([])
   const [userData, setUserData] = useState<UserData | undefined>();
   const [steps, setSteps] = useState<Step[]>([]);
+
+  const getUsersEmails = async () => {
+    try {
+      const response = await axios({
+        method: "get",
+        url: `/api/getUsers?email=markomarynovych@gmail.com`,
+        responseType: "json",
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      throw error;
+    }
+  };
+
 
   const fetchData = async () => {
     try {
@@ -18,6 +34,19 @@ const AccordionComp: React.FC = () => {
       console.error("Error fetching user data:", error);
     }
   };
+
+  console.log(allUsers)
+
+  useEffect(() => {
+    getUsersEmails().then((data) => {
+      setAllUsers((prevState: any) => {
+        return [
+          ...prevState,
+          ...data.data.map((user: { email: string }) => user.email),
+        ];
+      });
+    });
+  }, []);
 
   useEffect(() => {
     fetchData().then((data) => {
@@ -61,7 +90,7 @@ const AccordionComp: React.FC = () => {
             className="ml-4 p-2 rounded-md"
           >
             <option value={"wefwe@mail.com"}>Юнак 1</option>
-            <option value={"wefwe@mail.com"}>Юнак 2</option>
+            <option value={"daidvigrunvi@gmail.com"}>Юнак 2</option>
             <option value={"wefwe@mail.com"}>Юнак 3</option>
           </select>
           <ol className="pl-8">
