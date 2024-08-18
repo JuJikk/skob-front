@@ -1,7 +1,7 @@
 "use client";
-import ModalCheckWindow from "@/components/Modal/ModalCheckButton";
+import ModalCheckoutButton from "@/components/modal/modal-checkout-button";
 import axios from "axios";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type Props = {
     item: {
@@ -73,7 +73,7 @@ const AccordionItem = ({ item, currentProbaEmail, currentStep }: Props) => {
 
     return (
         <div className="flex flex-col border-b border-gray-200 w-full lg:w-1/4 mx-auto">
-            <ModalCheckWindow
+            <ModalCheckoutButton
                 modal={modal}
                 onLoading={openLoader}
                 setModal={setModal}

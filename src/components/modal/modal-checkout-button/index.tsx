@@ -1,5 +1,5 @@
-import React, { Dispatch, SetStateAction } from "react";
-import { Spinner } from "../Spinner/spinner";
+import { Dispatch, SetStateAction } from "react";
+import { Spinner } from "@/components/common/spinner/spinner";
 
 interface ModalWindowProps {
   setModal: Dispatch<SetStateAction<boolean>>;
@@ -9,7 +9,7 @@ interface ModalWindowProps {
   onLoading: boolean;
 }
 
-const ModalCheckWindow: React.FC<ModalWindowProps> = ({ setModal, modal, onConfirm, onCancel, onLoading }) => {
+const ModalCheckoutButton: React.FC<ModalWindowProps> = ({ setModal, modal, onConfirm, onCancel, onLoading }) => {
   return (
       <>
         {modal && (
@@ -27,4 +27,4 @@ const ModalCheckWindow: React.FC<ModalWindowProps> = ({ setModal, modal, onConfi
   );
 };
 
-export default ModalCheckWindow;
+export default ModalCheckoutButton;

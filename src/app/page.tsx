@@ -1,5 +1,5 @@
-import AddProbaButton from "@/components/Modal/AddProbaButton";
 import { auth } from "@clerk/nextjs/server";
+import AddProbaButton from "@/components/modal/add-proba-button";
 
 export default async function Home() {
     const { userId } = auth();

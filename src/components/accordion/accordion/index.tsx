@@ -1,10 +1,9 @@
 "use client";
-import { firstSample, secondSample, zeroSample } from "@/components/proba_json";
-import React, { useEffect, useState } from "react";
-import AccordionMainItem from "@/components/Accordion/AccordionMainItem";
-import findDataByEmail from "@/frontServices/findDataByEmail";
-import { Step } from "@/types/accordion";
-import { UserData } from "@/types/accordion";
+import { useEffect, useState } from "react";
+import AccordionMainItem from "@/components/accordion/accordion-main-item";
+import findDataByEmail from "@/frontServices/find-data-by-email";
+import { Step, UserData } from "@/types/accordion";
+import { firstSample, secondSample, zeroSample } from "@/utils/const/probas";
 
 const AccordionComp: React.FC = () => {
   const [currentProbaEmail, setCurrentProbaEmail] =
@@ -70,7 +69,10 @@ const AccordionComp: React.FC = () => {
             {steps.map((step, index) => (
               <div className="flex" key={index}>
                 <li className="w-full">
-                  <AccordionMainItem step={step} currentProbaEmail={currentProbaEmail}/>
+                  <AccordionMainItem
+                    step={step}
+                    currentProbaEmail={currentProbaEmail}
+                  />
                 </li>
               </div>
             ))}

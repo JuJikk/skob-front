@@ -1,6 +1,6 @@
-import AccordionItem from "@/components/Accordion/AccordionItem";
 import { ProbaData } from "@/types/accordion";
 import { useEffect, useState } from "react";
+import AccordionItem from "@/components/accordion/accordion-item"
 
 interface Step {
   title: string;
