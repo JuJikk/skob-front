@@ -1,9 +1,14 @@
 'use client'
 import { useState } from "react";
 import ModalWindow from "@/components/modal/modal-window";
+import {useUser} from "@clerk/nextjs";
 
 const ModalButton = () => {
-  const [modal, setModal] = useState(false);
+  const [modal, setModal] = useState(false)
+  const { user } = useUser()
+    if (user?.publicMetadata.role !== "ADMIN"){
+        return null;
+    }
 
   return (
     <>
