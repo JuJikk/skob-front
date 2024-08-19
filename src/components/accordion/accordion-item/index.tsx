@@ -37,7 +37,7 @@ const AccordionItem = ({ item, currentProbaEmail, currentStep }: Props) => {
             const updatedChecked = [...item.checked];
             updatedChecked[index] = checked ? 1 : 0;
 
-            await axios.post("/api/updateProbaData", {
+            await axios.post("/api/proba", {
                 email: currentProbaEmail,
                 probaType: item.probaType,
                 probaSubType: currentStep,

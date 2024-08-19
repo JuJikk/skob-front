@@ -1,13 +1,14 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import AccordionMainItem from "@/components/accordion/accordion-main-item";
-import findDataByEmail from "@/frontServices/find-data-by-email";
 import { Step, UserData } from "@/types/accordion";
 import { firstSample, secondSample, zeroSample } from "@/utils/const/probas";
+import {findDataByEmail} from "@/lib/data";
 import axios from "axios";
 import {useUser} from "@clerk/nextjs";
 
-const AccordionComp: React.FC = () => {
+const Accordion: React.FC = () => {
   const [currentProbaEmail, setCurrentProbaEmail] =
     useState<string>("wefwe@mail.com");
   const [allUsers, setAllUsers] = useState<any>([]);
@@ -20,7 +21,7 @@ const AccordionComp: React.FC = () => {
     try {
       const response = await axios({
         method: "get",
-        url: `/api/getUsers?email=markomarynovych@gmail.com`,
+        url: `/api/boys?email=markomarynovych@gmail.com`,
         responseType: "json",
       });
       return response.data;
@@ -37,8 +38,6 @@ const AccordionComp: React.FC = () => {
       console.error("Error fetching user data:", error);
     }
   };
-
-  console.log(allUsers);
 
   useEffect(() => {
     getUsersEmails().then((data) => {
@@ -128,4 +127,4 @@ const AccordionComp: React.FC = () => {
   );
 };
 
-export default AccordionComp;
+export default Accordion;

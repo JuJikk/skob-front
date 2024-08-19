@@ -7,7 +7,7 @@ export async function POST(req: Request ) {
     const { email, probaType, probaSubType, index, value } = body;
 
     await updateProbaDataInDatabase(
-        email,
+      email,
       probaType,
       probaSubType,
       index,
