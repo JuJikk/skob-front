@@ -17,11 +17,13 @@ const Accordion: React.FC = () => {
 
   const { user } = useUser();
 
+  const userEmail = user?.emailAddresses[0].emailAddress
+
   const getUsersEmails = async () => {
     try {
       const response = await axios({
         method: "get",
-        url: `/api/boys?email=markomarynovych@gmail.com`,
+        url: `/api/boys?email=${userEmail}`,
         responseType: "json",
       });
       return response.data;
@@ -40,22 +42,24 @@ const Accordion: React.FC = () => {
   };
 
   useEffect(() => {
-    getUsersEmails().then((data) => {
-      setAllUsers((prevState: any) => {
-        const newUsers = data.data.map(
-          (user: { email: string; name: string }) => ({
-            email: user.email,
-            name: user.name,
-          }),
-        );
-        const allUsers = [...prevState, ...newUsers];
-        const uniqueUsers = Array.from(
-          new Map(allUsers.map((user) => [user.email, user])).values(),
-        );
-        return uniqueUsers.sort((a, b) => a.email.localeCompare(b.email));
+    if(userEmail) {
+      getUsersEmails().then((data) => {
+        setCurrentProbaEmail(data.data[0].email)
+        setAllUsers((prevState: any) => {
+          const newUsers = data.data.map(
+              (user: { email: string; name: string }) => ({
+                email: user.email,
+                name: user.name,
+              }),
+          );
+          const allUsers = [...prevState, ...newUsers];
+          const uniqueUsers = Array.from(
+              new Map(allUsers.map((user) => [user.email, user])).values(),
+          );
+          return uniqueUsers.sort((a, b) => a.email.localeCompare(b.email));
+        });
       });
-    });
-  }, []);
+    }}, [userEmail]);
 
   useEffect(() => {
     fetchData().then((data) => {
