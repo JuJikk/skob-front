@@ -74,11 +74,11 @@ const Accordion: React.FC = () => {
     fetchInitialData();
   }, [userEmail, getUsersEmails, loadUserData]);
 
-  const handleSelectChange = useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedEmail = event.target.value;
     setCurrentProbaEmail(selectedEmail);
     loadUserData(selectedEmail);
-  }, [loadUserData]);
+  }
 
   return (
       <>
