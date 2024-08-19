@@ -1,13 +1,20 @@
 import dbConnect from "@/utils/mongodb";
 import User from "@/models/user";
 import {NextRequest, NextResponse} from "next/server";
+import { clerkClient } from '@clerk/nextjs/server'
 
 export async function POST(req: Request) {
     await dbConnect();
 
     try {
-        const res = await req.json();
-        const user = await User.create(res);
+        const body = await req.json();
+        const email = await clerkClient().users.getUserList({emailAddress: [body.email]});
+        if (email.totalCount === 0) {
+            throw new Error("EmailNotFound");
+        } else if ( email.data[0].publicMetadata.role === "ADMIN" ) {
+            throw new Error("AdminException");
+        }
+        const user = await User.create(body);
         return NextResponse.json(
             { success: true, data: user },
             { status: 201 }
@@ -31,6 +38,15 @@ export async function POST(req: Request) {
             statusCode = 400;
         } else if (error.name === 'CastError') {
             errorMessage = 'Cast Error: Invalid data type provided.';
+            statusCode = 400;
+        } else if (error === 'CastError') {
+            errorMessage = 'Cast Error: Invalid data type provided.';
+            statusCode = 400;
+        } else if (error === 'EmailNotFound') {
+            errorMessage = 'Email not found: Invalid data type provided.';
+            statusCode = 404;
+        } else if (error === 'AdminException') {
+            errorMessage = 'Admin Cannot added to Boys: Invalid data type provided.';
             statusCode = 400;
         }
 
