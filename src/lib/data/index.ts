@@ -17,7 +17,7 @@ export async function findDataByEmail(email: string) {
         const response = await axios({
             method: "get",
             url: `/api/users?email=${email}`,
-            responseType: "json", // Change to 'json' for JSON responses
+            responseType: "json",
         });
         return response.data;
     } catch (error) {
@@ -25,3 +25,18 @@ export async function findDataByEmail(email: string) {
         throw error;
     }
 }
+
+export const updateCheckedStatus = async (email: string, probaType: string, probaSubType: string, index: number, value: number) => {
+    try {
+        await axios.post("/api/proba", {
+            email,
+            probaType,
+            probaSubType,
+            index,
+            value,
+        });
+    } catch (error) {
+        console.error("Error updating checked status:", error);
+        throw error;
+    }
+};
