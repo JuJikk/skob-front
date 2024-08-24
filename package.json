@@ -14,6 +14,7 @@
     "@nextui-org/react": "^2.4.6",
     "@nextui-org/system": "^2.2.5",
     "@nextui-org/theme": "^2.2.9",
+    "@tanstack/react-query": "^5.52.1",
     "axios": "^1.7.2",
     "framer-motion": "^11.3.29",
     "mongodb": "^6.8.0",
@@ -24,6 +25,7 @@
     "webpack": "^5.92.1"
   },
   "devDependencies": {
+    "@tanstack/eslint-plugin-query": "^5.52.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

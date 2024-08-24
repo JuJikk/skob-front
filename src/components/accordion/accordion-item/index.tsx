@@ -1,7 +1,8 @@
 "use client";
 import ModalCheckoutButton from "@/components/modal/modal-checkout-button";
 import { useEffect, useRef, useState } from "react";
-import { updateCheckedStatus } from "@/lib/data";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 
 type Props = {
   item: {
@@ -32,26 +33,25 @@ const AccordionItem = ({ item, currentProbaEmail, currentStep }: Props) => {
     setIsOpen(!isOpen);
   };
 
-  const updateCheckboxStatus = async (index: number, checked: boolean) => {
-    try {
-      const updatedChecked = [...item.checked];
-      updatedChecked[index] = checked ? 1 : 0;
-
-      await updateCheckedStatus(
-        currentProbaEmail,
-        item.probaType,
-        currentStep,
+  const mutation = useMutation({
+    mutationFn: ({ email, probaType, probaSubType, index, value }: any) => {
+      return axios.post("/api/proba", {
+        email,
+        probaType,
+        probaSubType,
         index,
-        updatedChecked[index],
-      );
-
-      item.checked[index] = updatedChecked[index];
-      const newSum = updatedChecked.reduce((acc, num) => acc + num, 0);
+        value,
+      });
+    },
+    onSuccess: (data, variables) => {
+      item.checked[variables.index] = variables.value;
+      const newSum = item.checked.reduce((acc, num) => acc + num, 0);
       setIndaxesSum(newSum);
-    } catch (error) {
+    },
+    onError: (error) => {
       console.error("Error updating checked status:", error);
-    }
-  };
+    },
+  });
 
   const handleCheckboxChange =
     (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,12 +63,23 @@ const AccordionItem = ({ item, currentProbaEmail, currentStep }: Props) => {
   const handleModalConfirm = () => {
     if (pendingIndex !== null && pendingChecked !== null) {
       setOpenLoader(true);
-      updateCheckboxStatus(pendingIndex, pendingChecked).then(() => {
-        setPendingIndex(null);
-        setPendingChecked(null);
-        setModal(false);
-        setOpenLoader(false);
-      });
+      mutation.mutate(
+        {
+          email: currentProbaEmail,
+          probaType: item.probaType,
+          probaSubType: currentStep,
+          index: pendingIndex,
+          value: pendingChecked ? 1 : 0,
+        },
+        {
+          onSettled: () => {
+            setPendingIndex(null);
+            setPendingChecked(null);
+            setModal(false);
+            setOpenLoader(false);
+          },
+        }
+      );
     }
   };
 

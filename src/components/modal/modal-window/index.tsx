@@ -15,6 +15,7 @@ import {
   Button,
   Input,
 } from "@nextui-org/react";
+import { useMutation } from "@tanstack/react-query"
 
 interface ModalWindowProps {
   setModal: Dispatch<SetStateAction<boolean>>;
@@ -52,12 +53,26 @@ const ModalWindow: React.FC<ModalWindowProps> = ({ setModal, modal }) => {
     setInputValueMail(event.target.value);
   };
 
-  const handleSubmit = () => {
-    if (currentUserEmail && inputValueMail && inputValue) {
-      createForm(inputValue, inputValueMail, currentUserEmail);
+  const mutation = useMutation({
+    mutationFn: createForm,
+    onSuccess: () => {
       toggleModal();
       setInputValue("");
       setInputValueMail("");
+    },
+    onError: (error) => {
+      console.log("Failed to add user:", error)
+    }
+  })
+
+  const handleSubmit = () => {
+    if (currentUserEmail && inputValueMail && inputValue) {
+      console.log(currentUserEmail, inputValueMail, inputValue);
+      mutation.mutate({
+        name: inputValue,
+        email: inputValueMail,
+        ownerEmail: currentUserEmail,
+      })
     } else {
       console.error("User email address is undefined");
     }
