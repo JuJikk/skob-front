@@ -1,113 +1,98 @@
-"use client";
+import { useState, useEffect, useCallback } from "react";
+import { Step, UserData } from "../../../types/accordion";
+import { useFindDataByEmail, useFindUserDataByEmail } from "../../../lib/data"
+import { firstSample, secondSample, zeroSample } from "../../../utils/const/probas";
+import AccordionMainItem from "../accordion-main-item";
 
-import { useEffect, useState, useCallback } from "react";
-import AccordionMainItem from "@/components/accordion/accordion-main-item";
-import { Step, UserData } from "@/types/accordion";
-import { firstSample, secondSample, zeroSample } from "@/utils/const/probas";
-import { findDataByEmail } from "@/lib/data";
-import axios from "axios";
-import { useUser } from "@clerk/nextjs";
+interface AccordionProps {
+  user?: UserData;
+}
 
-const Accordion: React.FC = () => {
-  const [allUsers, setAllUsers] = useState<{ email: string; name: string }[]>([]);
-  const [currentProbaEmail, setCurrentProbaEmail] = useState<string>("");
-  const [userData, setUserData] = useState<UserData | undefined>();
+const Accordion: React.FC<AccordionProps> = () => {
   const [steps, setSteps] = useState<Step[]>([]);
+  const [currentUserEmail, setCurrentUserEmail] = useState('');
 
-  const { user } = useUser();
-  const userEmail = user?.emailAddresses[0].emailAddress;
+  const { data: userData, error: userError, isLoading } = useFindDataByEmail();
+  const currentUserEmailToFetch = currentUserEmail || userData?.[0]?.email;
 
-  const getUsersEmails = useCallback(async () => {
-    try {
-      const { data } = await axios.get(`/api/boys?email=${userEmail}`);
-      return data.data.map((user: { email: string; name: string }) => ({
-        email: user.email,
-        name: user.name,
-      }));
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      return [];
-    }
-  }, [userEmail]);
+  const { data: currentUserData, isLoading: isUserLoading, error: userDataError } = useFindUserDataByEmail(
+    currentUserEmailToFetch || ''
+  );
 
-  const loadUserData = useCallback(async (email: string) => {
-    try {
-      const { data } = await findDataByEmail(email);
-      setUserData(data);
+  const loadUserData = useCallback(() => {
+    if (currentUserData) {
       setSteps([
         {
           title: "Нульова проба",
           data: zeroSample,
-          checked: data.zeroProba,
+          checked: currentUserData.zeroProba,
           probaType: "zeroProba",
         },
         {
           title: "Перша проба",
           data: firstSample,
-          checked: data.firstProba,
+          checked: currentUserData.firstProba,
           probaType: "firstProba",
         },
         {
           title: "Друга проба",
           data: secondSample,
-          checked: data.secondProba,
+          checked: currentUserData.secondProba,
           probaType: "secondProba",
         },
       ]);
-    } catch (error) {
-      console.error("Error fetching user data:", error);
     }
-  }, []);
+  }, [currentUserData]);
 
   useEffect(() => {
-    const fetchInitialData = async () => {
-      if (userEmail) {
-        const users = await getUsersEmails();
-        setAllUsers(users);
-        if (users.length > 0) {
-          const email = users[0].email;
-          setCurrentProbaEmail(email);
-          loadUserData(email);
-        }
-      }
-    };
-    fetchInitialData();
-  }, [userEmail, getUsersEmails, loadUserData]);
+    loadUserData();
+  }, [currentUserData]);
 
   const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedEmail = event.target.value;
-    setCurrentProbaEmail(selectedEmail);
-    loadUserData(selectedEmail);
-  }
+    setCurrentUserEmail(selectedEmail);
+  };
+
+  useEffect(() => {
+    if (currentUserEmail) {
+      loadUserData();
+    }
+  }, [currentUserEmail, loadUserData]);
+
+  if (isLoading || isUserLoading) return "Завантажуємо проби...";
+  if (userError || userDataError) return "An error has occurred.";
 
   return (
-      <>
-        {userData && (
-            <div>
-              <select
-                  value={currentProbaEmail}
-                  onChange={handleSelectChange}
-                  className="ml-4 p-2 rounded-md"
-              >
-                {allUsers.map((user, index) => (
-                    <option key={index} value={user.email}>
-                      {user.name}
-                    </option>
-                ))}
-              </select>
-              <ol className="pl-8">
-                <h2 className="mt-4 ml-4 font-bold text-2xl">{userData.name}</h2>
-                {steps.map((step, index) => (
-                    <div className="flex" key={index}>
-                      <li className="w-full">
-                        <AccordionMainItem step={step} currentProbaEmail={currentProbaEmail} />
-                      </li>
-                    </div>
-                ))}
-              </ol>
-            </div>
-        )}
-      </>
+    <>
+      {userData?.length > 0 && (
+        <div>
+          <select
+            value={currentUserEmailToFetch}
+            onChange={handleSelectChange}
+            className="ml-4 p-2 rounded-md"
+          >
+            {userData.map((user, index) => (
+              <option key={index} value={user.email}>
+                {user.name}
+              </option>
+            ))}
+          </select>
+          <ol className="pl-8">
+            <h2 className="mt-4 ml-4 font-bold text-2xl">{currentUserData?.name}</h2>
+            {steps.map((step, index) => (
+              <div className="flex" key={index}>
+                <li className="w-full">
+                  <AccordionMainItem
+                    step={step}
+                    currentProbaEmail={currentUserEmailToFetch}
+                  />
+                </li>
+              </div>
+            ))}
+          </ol>
+        </div>
+      )}
+    </>
   );
 };
 

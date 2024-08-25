@@ -6,15 +6,13 @@ export interface ProbaData {
 }
 
 export interface UserData {
-    __v: number;
-    _id: string;
-    createdAt: string;
     email: string;
     firstProba: ProbaData;
     name: string;
-    ownerEmail: string;
     secondProba: ProbaData;
     zeroProba: ProbaData;
+    roles: string[];
+    sex: string,
 }
 
 export interface Step {
@@ -23,3 +21,14 @@ export interface Step {
     checked: ProbaData;
     probaType: string;
 }
+
+export type Props = {
+    item: {
+        section: string;
+        items: string[];
+        checked: number[];
+        probaType: string;
+    };
+    currentProbaEmail: string;
+    currentStep: string;
+};
