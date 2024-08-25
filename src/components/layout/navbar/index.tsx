@@ -42,7 +42,7 @@ export const NavBar = () => {
             className="bg-white text-gray-900 text-base font-bold border-gray-900 rounded-xl"
             onClick={() => {
               signOut()
-              navigate("/login")
+              location.reload()
             }}
           >
             Вийти

@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom"
 import { ErrorMessage, Field, Form, Formik } from "formik"
 import { registrationSchema } from "../../types/yupSchemas.ts"
 import { signUp } from "../../lib/auth/userActions.ts"
+import { Google } from "@medusajs/icons"
 
 const SignUp: React.FC = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false)
@@ -179,15 +180,6 @@ const SignUp: React.FC = () => {
           )}
         </Formik>
 
-        <a href="http://localhost:3000/auth/google">
-          <Button
-            variant="solid"
-            className="bg-gray-900 font-bold text-base text-white px-8 w-full rounded-xl"
-            size="lg">
-            Увійти через гугл
-          </Button>
-        </a>
-
         <div className="mt-4 text-center">
           <p className="text-lg font-light">
             Не маєте облікового запису?{" "}
@@ -199,6 +191,21 @@ const SignUp: React.FC = () => {
             </a>
           </p>
         </div>
+
+        <div className="flex items-center justify-center my-1">
+          <hr className="w-full border-gray-300" />
+          <span className="mx-4 text-gray-500">або</span>
+          <hr className="w-full border-gray-300" />
+        </div>
+
+        <a href="http://localhost:3000/auth/google">
+          <Button
+            variant="bordered"
+            className="bg-white font-bold text-base text-gray-900 px-8 mt-4 w-full rounded-xl border-gray-900 border-2"
+            size="lg">
+            Продовжуйте з Google <Google />
+          </Button>
+        </a>
       </div>
     </div>
   )

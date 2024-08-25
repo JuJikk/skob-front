@@ -31,4 +31,5 @@ export type Props = {
     };
     currentProbaEmail: string;
     currentStep: string;
+    refetchData: () => void;
 };

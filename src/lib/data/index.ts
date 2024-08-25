@@ -36,5 +36,6 @@ export const useFindUserDataByEmail = (email: string) => {
       })
       return response.data
     },
+    enabled: !!email,
   })
 }

@@ -1,60 +1,65 @@
-import { useEffect, useRef, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import React, { useEffect, useRef, useState } from "react"
+import { useMutation } from "@tanstack/react-query"
+import axios from "axios"
 import ModalCheckoutButton from "../../modal/modal-checkout-button"
 import { Props } from "../../../types/accordion.ts"
 
-const AccordionItem = ({ item, currentProbaEmail, currentStep }: Props) => {
-  const [openLoader, setOpenLoader] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
-  const descriptionRef = useRef<HTMLDivElement>(null);
-  const [indaxesSum, setIndaxesSum] = useState(0);
-  const [modal, setModal] = useState(false);
-  const [pendingIndex, setPendingIndex] = useState<number | null>(null);
-  const [pendingChecked, setPendingChecked] = useState<boolean | null>(null);
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
+
+const AccordionItem = ({ item, currentProbaEmail, currentStep, refetchData }: Props) => {
+  const [openLoader, setOpenLoader] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
+  const descriptionRef = useRef<HTMLDivElement>(null)
+  const [indaxesSum, setIndaxesSum] = useState(0)
+  const [modal, setModal] = useState(false)
+  const [pendingIndex, setPendingIndex] = useState<number | null>(null)
+  const [pendingChecked, setPendingChecked] = useState<boolean | null>(null)
+
   useEffect(() => {
-    const count = () => item.checked.reduce((acc, num) => acc + num, 0);
-    setIndaxesSum(count);
-  }, [item.checked]);
+    const count = () => item.checked.reduce((acc, num) => acc + num, 0)
+    setIndaxesSum(count)
+  }, [item.checked])
 
   const toggleAccordion = () => {
-    setIsOpen(!isOpen);
-  };
+    setIsOpen(!isOpen)
+  }
 
   const mutation = useMutation({
     mutationFn: ({ probaName, probaSubName, probaIndex, value }: any) => {
-      return axios.patch(`${BACKEND_URL}/probas/${currentProbaEmail}`, {
-        probaName,
-        probaSubName,
-        probaIndex,
-        value,
-      }, {withCredentials: true});
+      return axios.patch(
+        `${BACKEND_URL}/probas/${currentProbaEmail}`,
+        {
+          probaName,
+          probaSubName,
+          probaIndex,
+          value,
+        },
+        { withCredentials: true }
+      )
     },
     onSuccess: (_data, variables) => {
-      item.checked[variables.index] = variables.value;
-      const newSum = item.checked.reduce((acc, num) => acc + num, 0);
-      setIndaxesSum(newSum);
+      item.checked[variables.index] = variables.value
+      const newSum = item.checked.reduce((acc, num) => acc + num, 0)
+      setIndaxesSum(newSum)
+      refetchData()
     },
     onError: (error) => {
-      console.error("Error updating checked status:", error);
+      console.error("Error updating checked status:", error)
     },
-  });
-  //
-  // console.log(item.probaType)
+  })
 
   const handleCheckboxChange =
     (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
-      setPendingIndex(index);
-      setPendingChecked(e.target.checked);
-      setModal(true);
-    };
+      setPendingIndex(index)
+      setPendingChecked(e.target.checked)
+      setModal(true)
+    }
 
   const handleModalConfirm = () => {
     if (pendingIndex !== null && pendingChecked !== null) {
-      setOpenLoader(true);
+      setOpenLoader(true)
       mutation.mutate(
         {
           probaName: item.probaType,
@@ -64,15 +69,15 @@ const AccordionItem = ({ item, currentProbaEmail, currentStep }: Props) => {
         },
         {
           onSettled: () => {
-            setPendingIndex(null);
-            setPendingChecked(null);
-            setModal(false);
-            setOpenLoader(false);
+            setPendingIndex(null)
+            setPendingChecked(null)
+            setModal(false)
+            setOpenLoader(false)
           },
         }
-      );
+      )
     }
-  };
+  }
 
   return (
     <div className="flex flex-col border-b border-gray-200 w-full lg:w-1/4 mx-auto">
@@ -120,7 +125,7 @@ const AccordionItem = ({ item, currentProbaEmail, currentStep }: Props) => {
         </ol>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default AccordionItem;
+export default AccordionItem

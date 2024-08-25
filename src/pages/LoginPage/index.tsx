@@ -4,6 +4,7 @@ import { Eye, EyeSlash } from "@phosphor-icons/react"
 import { useNavigate } from "react-router-dom"
 import { Field, Form, Formik } from "formik"
 import { logIn } from "../../lib/auth/userActions.ts"
+import { Google } from "@medusajs/icons"
 
 const LoginPage: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false)
@@ -38,7 +39,6 @@ const LoginPage: React.FC = () => {
             password: "",
           }}
           onSubmit={(values) => {
-            console.log(values)
             handleLogIn(values.email, values.password)
           }}
         >
@@ -96,6 +96,21 @@ const LoginPage: React.FC = () => {
             </a>
           </p>
         </div>
+
+        <div className="flex items-center justify-center my-1">
+          <hr className="w-full border-gray-300" />
+          <span className="mx-4 text-gray-500">або</span>
+          <hr className="w-full border-gray-300" />
+        </div>
+
+        <a href="http://localhost:3000/auth/google">
+          <Button
+            variant="bordered"
+            className="bg-white font-bold text-base text-gray-900 px-8 mt-4 w-full rounded-xl border-gray-900 border-2"
+            size="lg">
+            Продовжуйте з Google <Google />
+          </Button>
+        </a>
       </div>
     </div>
   )

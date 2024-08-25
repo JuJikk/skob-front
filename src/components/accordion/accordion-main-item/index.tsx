@@ -1,52 +1,42 @@
-import { ProbaData } from "../../../types/accordion.ts"
 import { useEffect, useState } from "react"
 import AccordionItem from "../accordion-item"
+import { Step } from "../../../types/accordion"
 
-
-interface Step {
-  title: string;
-  data: { section: string; items: string[] }[];
-  checked: ProbaData;
-  probaType: string;
-}
-
-const mergeDataWithChecked = (
-  data: any[],
-  checked: ProbaData,
-  probaType: string,
-) => {
+const mergeDataWithChecked = (data: any[], checked: any, probaType: string) => {
   return data.map((sectionObj, index) => {
-    const sectionKey = String.fromCharCode(97 + index);
+    const sectionKey = String.fromCharCode(97 + index)
     return {
       section: sectionObj.section,
       items: sectionObj.items,
       checked: checked[sectionKey],
       probaType,
-    };
-  });
-};
+    }
+  })
+}
 
 const AccordionMainItem = ({
   step,
   currentProbaEmail,
+  refetchData,
 }: {
-  step: Step;
-  currentProbaEmail: string;
+  step: Step
+  currentProbaEmail: string
+  refetchData: () => void
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false)
   const [combinedData, setCombinedData] = useState(() =>
-    mergeDataWithChecked(step.data, step.checked, step.probaType),
-  );
+    mergeDataWithChecked(step.data, step.checked, step.probaType)
+  )
 
   useEffect(() => {
     setCombinedData(
-      mergeDataWithChecked(step.data, step.checked, step.probaType),
-    );
-  }, [step.data, step.checked, step.probaType]);
+      mergeDataWithChecked(step.data, step.checked, step.probaType)
+    )
+  }, [step.data, step.checked, step.probaType, currentProbaEmail])
 
   const toggleAccordion = () => {
-    setIsOpen(!isOpen);
-  };
+    setIsOpen(!isOpen)
+  }
 
   return (
     <div className="flex flex-col border-b border-gray-200 w-full mx-auto">
@@ -65,6 +55,7 @@ const AccordionMainItem = ({
         <div className="pl-8">
           {combinedData.map((obj, index) => (
             <AccordionItem
+              refetchData={refetchData}
               item={obj}
               key={index}
               currentProbaEmail={currentProbaEmail}
@@ -74,7 +65,7 @@ const AccordionMainItem = ({
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default AccordionMainItem;
+export default AccordionMainItem

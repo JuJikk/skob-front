@@ -1,8 +1,14 @@
-import { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Step, UserData } from "../../../types/accordion";
-import { useFindDataByEmail, useFindUserDataByEmail } from "../../../lib/data"
+import { useFindDataByEmail } from "../../../lib/data";
 import { firstSample, secondSample, zeroSample } from "../../../utils/const/probas";
 import AccordionMainItem from "../accordion-main-item";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 interface AccordionProps {
   user?: UserData;
@@ -10,14 +16,30 @@ interface AccordionProps {
 
 const Accordion: React.FC<AccordionProps> = () => {
   const [steps, setSteps] = useState<Step[]>([]);
-  const [currentUserEmail, setCurrentUserEmail] = useState('');
+  const [currentUserEmail, setCurrentUserEmail] = useState<string | undefined>(undefined);
 
   const { data: userData, error: userError, isLoading } = useFindDataByEmail();
-  const currentUserEmailToFetch = currentUserEmail || userData?.[0]?.email;
 
-  const { data: currentUserData, isLoading: isUserLoading, error: userDataError } = useFindUserDataByEmail(
-    currentUserEmailToFetch || ''
-  );
+  useEffect(() => {
+    if (userData && userData.length > 0 && !currentUserEmail) {
+      setCurrentUserEmail(userData[0].email);
+    }
+  }, [userData, currentUserEmail]);
+
+  const currentUserEmailToFetch = currentUserEmail || userData?.[0]?.email || "";
+
+  const { data: currentUserData, isLoading: isUserLoading, error: userDataError, refetch } = useQuery({
+    queryKey: ["currentUserData", currentUserEmailToFetch],
+    queryFn: async () => {
+      const response = await axios.get(`${BACKEND_URL}/users/${currentUserEmailToFetch}`, {
+        withCredentials: true,
+      });
+      return response.data;
+    },
+    enabled: !!currentUserEmailToFetch,
+  });
+
+  const refetchData = () => refetch()
 
   const loadUserData = useCallback(() => {
     if (currentUserData) {
@@ -46,18 +68,11 @@ const Accordion: React.FC<AccordionProps> = () => {
 
   useEffect(() => {
     loadUserData();
-  }, [currentUserData]);
+  }, [currentUserData, currentUserEmailToFetch]);
 
   const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedEmail = event.target.value;
-    setCurrentUserEmail(selectedEmail);
+    setCurrentUserEmail(event.target.value);
   };
-
-  useEffect(() => {
-    if (currentUserEmail) {
-      loadUserData();
-    }
-  }, [currentUserEmail, loadUserData]);
 
   if (isLoading || isUserLoading) return "Завантажуємо проби...";
   if (userError || userDataError) return "An error has occurred.";
@@ -71,7 +86,7 @@ const Accordion: React.FC<AccordionProps> = () => {
             onChange={handleSelectChange}
             className="ml-4 p-2 rounded-md"
           >
-            {userData.map((user, index) => (
+            {userData.map((user: UserData, index: number) => (
               <option key={index} value={user.email}>
                 {user.name}
               </option>
@@ -83,6 +98,7 @@ const Accordion: React.FC<AccordionProps> = () => {
               <div className="flex" key={index}>
                 <li className="w-full">
                   <AccordionMainItem
+                    refetchData={refetchData}
                     step={step}
                     currentProbaEmail={currentUserEmailToFetch}
                   />
