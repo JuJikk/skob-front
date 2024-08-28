@@ -6,9 +6,8 @@ import { useQuery } from "@tanstack/react-query"
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 
 export const addUser = async (email: string) => {
-  await axios.patch(
-    `${BACKEND_URL}/users/${email}`,
-    {},
+  await axios.get(
+    `${BACKEND_URL}/invites/send/${email}`,
     {
       withCredentials: true,
     }

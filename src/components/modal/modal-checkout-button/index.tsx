@@ -1,49 +1,50 @@
-import { Dispatch, SetStateAction } from "react";
-import { Spinner } from "@nextui-org/react"
+import {
+  Button,
+  Modal,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+} from "@nextui-org/react"
 
 interface ModalWindowProps {
-  setModal: Dispatch<SetStateAction<boolean>>;
-  modal: boolean;
-  onConfirm: () => void;
-  onCancel: () => void;
-  onLoading: boolean;
+  isOpen: boolean
+  onOpenChange: () => void
+  onConfirm: () => void
+  onLoading: boolean
 }
 
 const ModalCheckoutButton: React.FC<ModalWindowProps> = ({
-  modal,
+  isOpen,
   onConfirm,
-  onCancel,
+  onOpenChange,
   onLoading,
 }) => {
   return (
-    <>
-      {modal && (
-        <dialog className="fixed left-0 top-0 w-full h-full bg-black bg-opacity-50 z-50 overflow-auto backdrop-blur flex justify-center items-center">
-          <div className="bg-white m-auto p-8 rounded-2xl h-[200px] w-[250px] flex flex-col justify-center items-center">
-            <span className="mx-auto font-bold">Підписати точку</span>
-            <div className="flex justify-around items-center flex-col h-full">
-              <button
-                className="bg-gray-400 text-white p-2 w-36 rounded"
-                onClick={onCancel}
-              >
-                Я передумав/ла
-              </button>
-              {onLoading ? (
-                <Spinner />
-              ) : (
-                <button
-                  className="bg-red-500 text-white p-2 w-36 rounded"
-                  onClick={onConfirm}
-                >
-                  Так!
-                </button>
-              )}
-            </div>
-          </div>
-        </dialog>
-      )}
-    </>
-  );
-};
+    <Modal placement="center" isOpen={isOpen} onOpenChange={onOpenChange}>
+      <ModalContent>
+        <ModalHeader className="flex flex-col gap-1 mx-auto">Підписати точку</ModalHeader>
+        <ModalFooter className="flex justify-center">
+          <Button
+            isLoading={onLoading}
+            className="bg-gray-900 font-bold !w-full h-12 md:w-fit text-base text-white px-8 rounded-xl"
+            onPress={() => {
+              onOpenChange()
+              onConfirm()
+            }}
+          >
+            Підписати
+          </Button>
+          <Button
+            variant="bordered"
+            className="bg-white text-gray-900 !w-full h-12 md:w-fit text-base font-bold border-gray-900 rounded-xl"
+            onPress={onOpenChange}
+          >
+            Скасувати
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  )
+}
 
-export default ModalCheckoutButton;
+export default ModalCheckoutButton

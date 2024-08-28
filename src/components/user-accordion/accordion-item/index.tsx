@@ -1,9 +1,8 @@
-import React, { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useMutation } from "@tanstack/react-query"
 import axios from "axios"
 import ModalCheckoutButton from "../../modal/modal-checkout-button"
 import { Props } from "../../../types/accordion.ts"
-import { Checkbox, useDisclosure } from "@nextui-org/react"
 import { CaretDown, CaretLeft } from "@phosphor-icons/react"
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -12,12 +11,12 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 
 const AccordionItem = ({ item, currentProbaEmail, currentStep, refetchData }: Props) => {
   const [openLoader, setOpenLoader] = useState(false)
-  const [isAccordionOpen, setIsAccordionOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
   const descriptionRef = useRef<HTMLDivElement>(null)
   const [indaxesSum, setIndaxesSum] = useState(0)
+  const [modal, setModal] = useState(false)
   const [pendingIndex, setPendingIndex] = useState<number | null>(null)
   const [pendingChecked, setPendingChecked] = useState<boolean | null>(null)
-  const {isOpen, onOpen, onOpenChange} = useDisclosure();
 
   useEffect(() => {
     const count = () => item.checked.reduce((acc, num) => acc + num, 0)
@@ -25,7 +24,7 @@ const AccordionItem = ({ item, currentProbaEmail, currentStep, refetchData }: Pr
   }, [item.checked])
 
   const toggleAccordion = () => {
-    setIsAccordionOpen(!isAccordionOpen)
+    setIsOpen(!isOpen)
   }
 
   const mutation = useMutation({
@@ -52,13 +51,6 @@ const AccordionItem = ({ item, currentProbaEmail, currentStep, refetchData }: Pr
     },
   })
 
-  const handleCheckboxChange =
-    (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
-      setPendingIndex(index)
-      setPendingChecked(e.target.checked)
-      onOpen()
-    }
-
   const handleModalConfirm = () => {
     if (pendingIndex !== null && pendingChecked !== null) {
       setOpenLoader(true)
@@ -73,7 +65,7 @@ const AccordionItem = ({ item, currentProbaEmail, currentStep, refetchData }: Pr
           onSettled: () => {
             setPendingIndex(null)
             setPendingChecked(null)
-            onOpenChange()
+            setModal(false)
             setOpenLoader(false)
           },
         }
@@ -84,10 +76,11 @@ const AccordionItem = ({ item, currentProbaEmail, currentStep, refetchData }: Pr
   return (
     <div className="flex flex-col border-b border-gray-200 w-[95%] mx-auto">
       <ModalCheckoutButton
+        modal={modal}
         onLoading={openLoader}
+        setModal={setModal}
         onConfirm={handleModalConfirm}
-        onOpenChange={onOpenChange}
-        isOpen={isOpen}
+        onCancel={() => setModal(false)}
       />
       <div
         className="flex justify-between items-center py-4 cursor-pointer"
@@ -96,24 +89,17 @@ const AccordionItem = ({ item, currentProbaEmail, currentStep, refetchData }: Pr
         <span className="text-base font-medium md:font-semibold">
           {item.section} ({indaxesSum} / {item.items.length})
         </span>
-        <button>{isAccordionOpen ? <CaretDown className='size-4' /> :<CaretLeft className='size-4' />}</button>
+        <button>{isOpen ? <CaretDown className='size-4' /> :<CaretLeft className='size-4' />}</button>
       </div>
       <div
         ref={descriptionRef}
         className={`overflow-auto transition-all duration-200 ease-in-out ${
-          isAccordionOpen ? "max-h-screen" : "max-h-0"
+          isOpen ? "max-h-screen" : "max-h-0"
         }`}
       >
-        <ol>
+        <ol className="list-decimal">
           {item.items.map((subItem, index) => (
             <div key={index} className="flex">
-              <Checkbox
-                onChange={handleCheckboxChange(index)}
-                isSelected={!!item.checked[index]}
-                className="mb-auto mr-1"
-                color="default"
-                type="checkbox"
-              />
               <li className={`text-base mb-2 font-normal ${item.checked[index] ? "text-[#A1A1AA] line-through" : ""}`}>
                 {subItem}
               </li>

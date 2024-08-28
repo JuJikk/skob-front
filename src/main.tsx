@@ -6,7 +6,6 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import App from "./App.tsx"
 import ErrorPage from "./pages/ErrorPage"
 import LoginPage from "./pages/LoginPage"
-import SignUpPage from "./pages/SignUpPage"
 import { ProtectedRoute } from "./pages/routeProtection/ProtectedRoute.tsx"
 import { PublicRoute } from "./pages/routeProtection/publicRoutes.tsx"
 
@@ -28,14 +27,14 @@ const router = createBrowserRouter([
       </PublicRoute>
     ),
   },
-  {
-    path: "signup",
-    element: (
-      <PublicRoute>
-        <SignUpPage />
-      </PublicRoute>
-    ),
-  },
+  // {
+  //   path: "signup",
+  //   element: (
+  //     <PublicRoute>
+  //       <SignUpPage />
+  //     </PublicRoute>
+  //   ),
+  // },
 ]);
 
 
