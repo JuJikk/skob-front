@@ -1,87 +1,23 @@
-import { useEffect, useRef, useState } from "react"
-import { useMutation } from "@tanstack/react-query"
-import axios from "axios"
-import ModalCheckoutButton from "../../modal/modal-checkout-button"
-import { Props } from "../../../types/accordion.ts"
-import { CaretDown, CaretLeft } from "@phosphor-icons/react"
+import { useEffect, useRef, useState } from "react";
+import { Props } from "../../../types/accordion.ts";
+import { CaretDown, CaretLeft } from "@phosphor-icons/react";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
-
-const AccordionItem = ({ item, currentProbaEmail, currentStep, refetchData }: Props) => {
-  const [openLoader, setOpenLoader] = useState(false)
-  const [isOpen, setIsOpen] = useState(false)
-  const descriptionRef = useRef<HTMLDivElement>(null)
-  const [indaxesSum, setIndaxesSum] = useState(0)
-  const [modal, setModal] = useState(false)
-  const [pendingIndex, setPendingIndex] = useState<number | null>(null)
-  const [pendingChecked, setPendingChecked] = useState<boolean | null>(null)
+const AccordionItem = ({ item }: Props) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const descriptionRef = useRef<HTMLDivElement>(null);
+  const [indaxesSum, setIndaxesSum] = useState(0);
 
   useEffect(() => {
-    const count = () => item.checked.reduce((acc, num) => acc + num, 0)
-    setIndaxesSum(count)
-  }, [item.checked])
+    const count = item.checked.reduce((acc, num) => acc + num, 0);
+    setIndaxesSum(count);
+  }, [item.checked]);
 
   const toggleAccordion = () => {
-    setIsOpen(!isOpen)
-  }
-
-  const mutation = useMutation({
-    mutationFn: ({ probaName, probaSubName, probaIndex, value }: any) => {
-      return axios.patch(
-        `${BACKEND_URL}/probas/${currentProbaEmail}`,
-        {
-          probaName,
-          probaSubName,
-          probaIndex,
-          value,
-        },
-        { withCredentials: true }
-      )
-    },
-    onSuccess: (_data, variables) => {
-      item.checked[variables.index] = variables.value
-      const newSum = item.checked.reduce((acc, num) => acc + num, 0)
-      setIndaxesSum(newSum)
-      refetchData()
-    },
-    onError: (error) => {
-      console.error("Error updating checked status:", error)
-    },
-  })
-
-  const handleModalConfirm = () => {
-    if (pendingIndex !== null && pendingChecked !== null) {
-      setOpenLoader(true)
-      mutation.mutate(
-        {
-          probaName: item.probaType,
-          probaSubName: currentStep,
-          probaIndex: pendingIndex,
-          value: pendingChecked ? 1 : 0,
-        },
-        {
-          onSettled: () => {
-            setPendingIndex(null)
-            setPendingChecked(null)
-            setModal(false)
-            setOpenLoader(false)
-          },
-        }
-      )
-    }
-  }
+    setIsOpen(!isOpen);
+  };
 
   return (
     <div className="flex flex-col border-b border-gray-200 w-[95%] mx-auto">
-      <ModalCheckoutButton
-        modal={modal}
-        onLoading={openLoader}
-        setModal={setModal}
-        onConfirm={handleModalConfirm}
-        onCancel={() => setModal(false)}
-      />
       <div
         className="flex justify-between items-center py-4 cursor-pointer"
         onClick={toggleAccordion}
@@ -89,7 +25,13 @@ const AccordionItem = ({ item, currentProbaEmail, currentStep, refetchData }: Pr
         <span className="text-base font-medium md:font-semibold">
           {item.section} ({indaxesSum} / {item.items.length})
         </span>
-        <button>{isOpen ? <CaretDown className='size-4' /> :<CaretLeft className='size-4' />}</button>
+        <button>
+          {isOpen ? (
+            <CaretDown className="size-4" />
+          ) : (
+            <CaretLeft className="size-4" />
+          )}
+        </button>
       </div>
       <div
         ref={descriptionRef}
@@ -97,18 +39,21 @@ const AccordionItem = ({ item, currentProbaEmail, currentStep, refetchData }: Pr
           isOpen ? "max-h-screen" : "max-h-0"
         }`}
       >
-        <ol className="list-decimal">
+        <ol className="list-decimal list-inside">
           {item.items.map((subItem, index) => (
-            <div key={index} className="flex">
-              <li className={`text-base mb-2 font-normal ${item.checked[index] ? "text-[#A1A1AA] line-through" : ""}`}>
-                {subItem}
-              </li>
-            </div>
+            <li
+              key={index}
+              className={`text-base mb-2 font-normal ${
+                item.checked[index] ? "text-[#A1A1AA] line-through" : ""
+              }`}
+            >
+              {subItem}
+            </li>
           ))}
         </ol>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default AccordionItem
+export default AccordionItem;

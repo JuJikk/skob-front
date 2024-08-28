@@ -104,13 +104,13 @@ const AccordionItem = ({ item, currentProbaEmail, currentStep, refetchData }: Pr
           isAccordionOpen ? "max-h-screen" : "max-h-0"
         }`}
       >
-        <ol>
+        <ol className="list-decimal list-inside">
           {item.items.map((subItem, index) => (
             <div key={index} className="flex">
               <Checkbox
                 onChange={handleCheckboxChange(index)}
                 isSelected={!!item.checked[index]}
-                className="mb-auto mr-1"
+                className="mb-auto mr-0.5"
                 color="default"
                 type="checkbox"
               />
