@@ -14,6 +14,19 @@ export const addUser = async (email: string) => {
   )
 }
 
+export const markAllProba = async (email: string, probaName: string) => {
+  await axios.patch(
+    `${BACKEND_URL}/probas/entire/${email}`,
+    {
+      probaName: probaName,
+      value: 1,
+    },
+    {
+      withCredentials: true,
+    }
+  )
+}
+
 export const useFindDataByEmail = () => {
   return useQuery({
     queryKey: ["userData"],
