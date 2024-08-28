@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Step, UserData } from "../../../types/accordion";
-import { useFindDataByEmail } from "../../../lib/data";
+import { markAllProba, useFindDataByEmail } from "../../../lib/data"
 import { firstSample, secondSample, zeroSample } from "../../../utils/const/probas";
 import AccordionMainItem from "../accordion-main-item";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useSelectStore } from "../../../lib/contex/selectButton.tsx";
 import { Accordion, AccordionItem } from "@nextui-org/accordion";
+import { Button, useDisclosure } from "@nextui-org/react"
+import ModalAllProba from "../../modal/modal-all-proba"
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
@@ -20,7 +22,7 @@ const AccordionComponent: React.FC<AccordionProps> = () => {
   const [steps, setSteps] = useState<Step[]>([]);
 
   const { currentUserEmail, setCurrentUserEmail } = useSelectStore();
-
+  const {isOpen, onOpen, onOpenChange} = useDisclosure();
   const { data: userData, error: userError, isLoading } = useFindDataByEmail();
 
   useEffect(() => {
@@ -73,6 +75,10 @@ const AccordionComponent: React.FC<AccordionProps> = () => {
     loadUserData();
   }, [currentUserData, currentUserEmailToFetch]);
 
+  const handleModalConfirm = (probaName: string) => {
+    markAllProba(currentUserEmailToFetch, probaName)
+  }
+
   if (isLoading || isUserLoading) return "Завантажуємо проби...";
   if (userError || userDataError) return "An error has occurred.";
 
@@ -80,6 +86,15 @@ const AccordionComponent: React.FC<AccordionProps> = () => {
     <>
       {userData?.length > 0 && (
         <div className="max-w-[70rem] mx-auto px-8">
+          <ModalAllProba
+            // onLoading={openLoader}
+            onConfirm={handleModalConfirm}
+            onOpenChange={onOpenChange}
+            isOpen={isOpen}
+          />
+          <Button onClick={onOpen} className="border-black font-medium" variant="bordered">
+            Підписати цілу пробу
+          </Button>
           <Accordion>
             {steps.map((step, index) => (
               <AccordionItem className="text-2xl font-bold" key={index} title={step.title}>
@@ -94,7 +109,7 @@ const AccordionComponent: React.FC<AccordionProps> = () => {
         </div>
       )}
     </>
-  );
+  )
 };
 
 export default AccordionComponent;

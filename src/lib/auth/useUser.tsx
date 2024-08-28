@@ -1,6 +1,6 @@
-import create from "zustand";
 import axios from "axios";
-import { UserData } from "../../types/accordion.ts"
+import create from "zustand";
+import { UserData } from "../../types/accordion.ts";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
@@ -10,7 +10,8 @@ interface UserState {
   user: UserData | null;
   isLoading: boolean;
   getUser: () => Promise<UserData | null>;
-  setUser: (user: UserData | null) => void;
+
+      setUser: (user: UserData | null) => void;
 }
 
 export const useUserStore = create<UserState>((set) => ({

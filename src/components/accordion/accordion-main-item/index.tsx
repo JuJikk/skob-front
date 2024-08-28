@@ -12,7 +12,6 @@ const mergeDataWithChecked = (
   checked: ProbaData,
   probaType: string
 ) => {
-  console.log(data)
   return data.map((sectionObj, index) => {
     const sectionKey = String.fromCharCode(97 + index)
     return {
