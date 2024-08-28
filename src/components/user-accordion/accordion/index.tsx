@@ -27,8 +27,6 @@ const AccordionUserComponent: React.FC<AccordionProps> = () => {
     },
   });
 
-  console.log(currentUserData)
-
   const refetchData = () => refetch();
 
   const loadUserData = useCallback(() => {

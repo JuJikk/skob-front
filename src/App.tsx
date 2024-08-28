@@ -8,17 +8,15 @@ function App() {
     user: state.user,
   }))
 
-  return(
-        <html lang="en">
-        <body className="bg-[#fff] text-black w-full">
-           <NavBar/>
-           {user?.roles[0] === "FOREMAN" ? (
-             <Accordion/>
-           ) : (
-             <AccordionUserComponent/>
-           )}
-        </body>
-        </html>
+  return (
+    <div>
+      <NavBar />
+      {user?.roles[0] === "FOREMAN" ? (
+        <Accordion />
+      ) : (
+        <AccordionUserComponent />
+      )}
+    </div>
   )
 }
 

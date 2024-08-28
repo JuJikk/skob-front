@@ -10,8 +10,7 @@ interface UserState {
   user: UserData | null;
   isLoading: boolean;
   getUser: () => Promise<UserData | null>;
-
-      setUser: (user: UserData | null) => void;
+  setUser: (user: UserData | null) => void;
 }
 
 export const useUserStore = create<UserState>((set) => ({

@@ -14,14 +14,14 @@ const AccordionItem = ({ item, currentProbaEmail, currentStep, refetchData }: Pr
   const [openLoader, setOpenLoader] = useState(false)
   const [isAccordionOpen, setIsAccordionOpen] = useState(false)
   const descriptionRef = useRef<HTMLDivElement>(null)
-  const [indaxesSum, setIndaxesSum] = useState(0)
+  const [indexesSum, setIndexesSum] = useState(0)
   const [pendingIndex, setPendingIndex] = useState<number | null>(null)
   const [pendingChecked, setPendingChecked] = useState<boolean | null>(null)
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
 
   useEffect(() => {
     const count = () => item.checked.reduce((acc, num) => acc + num, 0)
-    setIndaxesSum(count)
+    setIndexesSum(count)
   }, [item.checked])
 
   const toggleAccordion = () => {
@@ -44,7 +44,7 @@ const AccordionItem = ({ item, currentProbaEmail, currentStep, refetchData }: Pr
     onSuccess: (_data, variables) => {
       item.checked[variables.index] = variables.value
       const newSum = item.checked.reduce((acc, num) => acc + num, 0)
-      setIndaxesSum(newSum)
+      setIndexesSum(newSum)
       refetchData()
     },
     onError: (error) => {
@@ -94,7 +94,7 @@ const AccordionItem = ({ item, currentProbaEmail, currentStep, refetchData }: Pr
         onClick={toggleAccordion}
       >
         <span className="text-base font-medium md:font-semibold">
-          {item.section} ({indaxesSum} / {item.items.length})
+          {item.section} ({indexesSum} / {item.items.length})
         </span>
         <button>{isAccordionOpen ? <CaretDown className='size-4' /> :<CaretLeft className='size-4' />}</button>
       </div>
