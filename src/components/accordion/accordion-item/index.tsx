@@ -4,7 +4,7 @@ import axios from "axios"
 import ModalCheckoutButton from "../../modal/modal-checkout-button"
 import { Props } from "../../../types/accordion.ts"
 import { Checkbox, useDisclosure } from "@nextui-org/react"
-import { CaretDown, CaretLeft } from "@phosphor-icons/react"
+import { CaretDown } from "@phosphor-icons/react"
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
@@ -96,7 +96,13 @@ const AccordionItem = ({ item, currentProbaEmail, currentStep, refetchData }: Pr
         <span className="text-base font-medium md:font-semibold">
           {item.section} ({indexesSum} / {item.items.length})
         </span>
-        <button>{isAccordionOpen ? <CaretDown className='size-4' /> :<CaretLeft className='size-4' />}</button>
+        <button
+          className={`transition-transform duration-300 ${
+            isAccordionOpen ? "rotate-90" : "rotate-0"
+          }`}
+        >
+          <CaretDown className="size-4" />
+        </button>
       </div>
       <div
         ref={descriptionRef}
@@ -104,13 +110,13 @@ const AccordionItem = ({ item, currentProbaEmail, currentStep, refetchData }: Pr
           isAccordionOpen ? "max-h-screen" : "max-h-0"
         }`}
       >
-        <ol>
+        <ol className="list-decimal list-inside">
           {item.items.map((subItem, index) => (
             <div key={index} className="flex">
               <Checkbox
                 onChange={handleCheckboxChange(index)}
                 isSelected={!!item.checked[index]}
-                className="mb-auto mr-1"
+                className="mb-auto mr-0.5"
                 color="default"
                 type="checkbox"
               />

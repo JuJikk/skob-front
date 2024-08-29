@@ -5,6 +5,7 @@ import {
   ModalFooter,
   ModalHeader,
 } from "@nextui-org/react"
+import React from "react"
 
 interface ModalWindowProps {
   isOpen: boolean
