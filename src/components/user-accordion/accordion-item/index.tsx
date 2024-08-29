@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Props } from "../../../types/accordion.ts";
-import { CaretDown, CaretLeft } from "@phosphor-icons/react";
+import { CaretDown } from "@phosphor-icons/react";
 
 const AccordionItem = ({ item }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -25,12 +25,12 @@ const AccordionItem = ({ item }: Props) => {
         <span className="text-base font-medium md:font-semibold">
           {item.section} ({indaxesSum} / {item.items.length})
         </span>
-        <button>
-          {isOpen ? (
-            <CaretDown className="size-4" />
-          ) : (
-            <CaretLeft className="size-4" />
-          )}
+        <button
+          className={`transition-transform duration-300 ${
+            isOpen ? "rotate-90" : "rotate-0"
+          }`}
+        >
+          <CaretDown className="size-4" />
         </button>
       </div>
       <div

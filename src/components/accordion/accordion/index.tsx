@@ -13,7 +13,7 @@ import { useSelectStore } from "../../../lib/contex/selectButton.tsx"
 import { Accordion, AccordionItem } from "@nextui-org/accordion"
 import { Button, CircularProgress, useDisclosure } from "@nextui-org/react"
 import ModalAllProba from "../../modal/modal-all-proba"
-import { calculateCompletionPercentage } from "../../../lib/calculations"
+import { useCompletionPercentages } from "../../../lib/calculations"
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
@@ -92,6 +92,8 @@ const AccordionComponent: React.FC<AccordionProps> = () => {
     markAllProba(currentUserEmailToFetch, probaName)
   }
 
+  const percentages = useCompletionPercentages(steps);
+
   if (isLoading || isUserLoading) return "Завантажуємо проби..."
   if (userError || userDataError) return "An error has occurred."
 
@@ -125,7 +127,7 @@ const AccordionComponent: React.FC<AccordionProps> = () => {
                         track: "stroke-gray-300",
                         value: "text-xs font-semibold text-black",
                       }}
-                      value={calculateCompletionPercentage(step)}
+                      value={percentages[index]}
                       strokeWidth={4}
                       showValueLabel={true}
                     />

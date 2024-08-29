@@ -1,9 +1,13 @@
-import { Step } from "../../types/accordion.ts"
+import { useMemo } from "react";
+import { Step } from "../../types/accordion";
 
-export const calculateCompletionPercentage = (proba: Step): number => {
-  const allTasks = Object.values(proba.checked).flat();
-  const totalCompletedTasks = allTasks.reduce((acc, task) => acc + task, 0);
-  const overallPercentage = (totalCompletedTasks / allTasks.length) * 100;
-
-  return parseFloat(overallPercentage.toFixed(2));
+export const useCompletionPercentages = (steps: Step[]): number[] => {
+  return useMemo(() => {
+    return steps.map((step) => {
+      const allTasks = Object.values(step.checked).flat();
+      const totalCompletedTasks = allTasks.reduce((acc, task) => acc + task, 0);
+      const overallPercentage = (totalCompletedTasks / allTasks.length) * 100;
+      return parseFloat(overallPercentage.toFixed(2));
+    });
+  }, [steps]);
 };

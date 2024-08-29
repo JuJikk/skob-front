@@ -10,7 +10,7 @@ import axios from "axios"
 import { Accordion, AccordionItem } from "@nextui-org/accordion"
 import AccordionMainItem from "../accordion-main-item"
 import { CircularProgress } from "@nextui-org/react"
-import { calculateCompletionPercentage } from "../../../lib/calculations"
+import { useCompletionPercentages } from "../../../lib/calculations"
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
@@ -37,8 +37,6 @@ const AccordionUserComponent: React.FC<AccordionProps> = () => {
       return response.data
     },
   })
-
-  console.log(currentUserData)
 
   const refetchData = () => refetch()
 
@@ -71,8 +69,10 @@ const AccordionUserComponent: React.FC<AccordionProps> = () => {
     loadUserData()
   }, [currentUserData])
 
-  if (isUserLoading || isUserLoading) return "Завантажуємо проби..."
-  if (userDataError || userDataError) return "An error has occurred."
+  const percentages = useCompletionPercentages(steps);
+
+  if (isUserLoading) return "Завантажуємо проби..."
+  if (userDataError) return "An error has occurred."
 
   return (
     <>
@@ -92,7 +92,7 @@ const AccordionUserComponent: React.FC<AccordionProps> = () => {
                       track: "stroke-gray-300",
                       value: "text-xs font-semibold text-black",
                     }}
-                    value={calculateCompletionPercentage(step)}
+                    value={percentages[index]}
                     strokeWidth={4}
                     showValueLabel={true}
                   />
