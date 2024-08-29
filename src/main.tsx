@@ -27,14 +27,6 @@ const router = createBrowserRouter([
       </PublicRoute>
     ),
   },
-  // {
-  //   path: "signup",
-  //   element: (
-  //     <PublicRoute>
-  //       <SignUpPage />
-  //     </PublicRoute>
-  //   ),
-  // },
 ]);
 
 

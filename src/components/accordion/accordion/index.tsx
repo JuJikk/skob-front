@@ -25,7 +25,6 @@ interface AccordionProps {
 
 const AccordionComponent: React.FC<AccordionProps> = () => {
   const [steps, setSteps] = useState<Step[]>([])
-
   const { currentUserEmail, setCurrentUserEmail } = useSelectStore()
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const { data: userData, error: userError, isLoading } = useFindDataByEmail()
@@ -54,7 +53,7 @@ const AccordionComponent: React.FC<AccordionProps> = () => {
       )
       return response.data
     },
-    enabled: !!currentUserEmailToFetch,
+    enabled: !!currentUserEmailToFetch || !!rerenderState,
   })
 
   const refetchData = () => refetch()
@@ -93,7 +92,6 @@ const AccordionComponent: React.FC<AccordionProps> = () => {
   }
 
   const percentages = useCompletionPercentages(steps);
-
   if (isLoading || isUserLoading) return "Завантажуємо проби..."
   if (userError || userDataError) return "An error has occurred."
 
@@ -105,6 +103,8 @@ const AccordionComponent: React.FC<AccordionProps> = () => {
             onConfirm={handleModalConfirm}
             onOpenChange={onOpenChange}
             isOpen={isOpen}
+            userEmail={currentUserEmailToFetch}
+            refetchData={rerender}
           />
           <Button
             onClick={onOpen}
@@ -116,6 +116,7 @@ const AccordionComponent: React.FC<AccordionProps> = () => {
           <Accordion>
             {steps.map((step, index) => (
               <AccordionItem
+                className="text-2xl font-bold"
                 key={index}
                 title={
                   <div className="flex justify-between items-center w-full rounded-t-lg">
@@ -135,7 +136,7 @@ const AccordionComponent: React.FC<AccordionProps> = () => {
                 }
               >
                 <AccordionMainItem
-                  refetchData={refetchData}
+                  refetchData={refetch}
                   step={step}
                   currentProbaEmail={currentUserEmailToFetch}
                 />

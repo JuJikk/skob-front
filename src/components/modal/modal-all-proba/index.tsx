@@ -1,3 +1,4 @@
+import React, { useState } from "react"
 import {
   Button,
   Modal,
@@ -7,23 +8,27 @@ import {
   Select,
   SelectItem,
 } from "@nextui-org/react"
-import { useState } from "react"
+import { markAllProba } from "../../../lib/data"
 
 interface ModalWindowProps {
   isOpen: boolean
   onOpenChange: () => void
-  onConfirm: (probaName: string) => void
+  userEmail: string
+  refetchData: () => void
 }
 
 const ModalAllProbaButton: React.FC<ModalWindowProps> = ({
   isOpen,
-  onConfirm,
   onOpenChange,
+  userEmail,
+  refetchData,
 }) => {
   const [probaToMark, setProbaToMark] = useState("")
-  const onPress = () => {
+
+  const onConfirm = async () => {
+    await markAllProba(userEmail, probaToMark)
     onOpenChange()
-    onConfirm(probaToMark)
+    refetchData()
   }
 
   return (
@@ -47,7 +52,7 @@ const ModalAllProbaButton: React.FC<ModalWindowProps> = ({
         <ModalFooter className="flex justify-center">
           <Button
             className="bg-gray-900 font-bold !w-full h-12 md:w-fit text-base text-white px-8 rounded-xl"
-            onPress={onPress}
+            onPress={onConfirm}
           >
             Так!
           </Button>

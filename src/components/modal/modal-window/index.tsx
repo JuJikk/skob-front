@@ -1,88 +1,85 @@
 import {
-  ChangeEvent,
-  Dispatch,
-  SetStateAction,
-  useState,
-} from "react";
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
   Button,
   Input,
-} from "@nextui-org/react";
+  Modal, ModalHeader, ModalBody, ModalContent,
+} from "@nextui-org/react"
+import { Formik, Form, Field, ErrorMessage } from "formik"
+import * as Yup from "yup"
 import { addUser } from "../../../lib/data"
 
 interface ModalWindowProps {
-  setModal: Dispatch<SetStateAction<boolean>>;
-  modal: boolean;
+  onOpenChange: () => void
+  isOpen: boolean
 }
 
-const ModalWindow: React.FC<ModalWindowProps> = ({ setModal, modal }) => {
-  const [inputValueMail, setInputValueMail] = useState("");
+const ModalWindow: React.FC<ModalWindowProps> = ({ onOpenChange, isOpen }) => {
+  const validationSchema = Yup.object({
+    email: Yup.string()
+      .email("Неправильний формат електронної пошти")
+      .required("Електронна пошта обов'язкова"),
+  })
 
-  const toggleModal = () => {
-    setModal(!modal);
-  };
+  const handleSubmit = (values: { email: string }) => {
+    addUser(values.email).then(() => onOpenChange())
+  }
 
-  const handleInputChangeMail = (event: ChangeEvent<HTMLInputElement>) => {
-    setInputValueMail(event.target.value);
-  };
-
-
-  const handleSubmit = () => {
-    if (inputValueMail) {
-      addUser(inputValueMail).then(() => toggleModal())
-    } else {
-      console.error("User email address is undefined");
-    }
-  };
   return (
-    <>
-      {modal && (
-        <dialog className="fixed left-0 top-0 w-full h-full bg-black bg-opacity-50 z-50 overflow-auto backdrop-blur flex justify-center items-center">
-          <Card className="min-w-[250px] w-[90%] md:w-1/2 p-2 md:p-8">
-            <CardHeader className="flex gap-3">
-              <p className="text-3xl font-bold">Добавте юнака</p>
-            </CardHeader>
-            <CardBody>
-              <form action="" className="flex flex-col gap-4">
-                <Input
+    <Modal
+      placement="center"
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
+    >
+      <ModalContent>
+        <ModalHeader className="flex gap-3">
+          <p className="text-3xl mt-2 font-bold">Добавте юнака</p>
+        </ModalHeader>
+        <ModalBody>
+          <Formik
+            initialValues={{ email: "" }}
+            validationSchema={validationSchema}
+            onSubmit={handleSubmit}
+          >
+            {({ handleChange, values }) => (
+              <Form className="flex flex-col gap-4">
+                <Field
+                  name="email"
+                  as={Input}
+                  inputMode="email"
                   size="md"
-                  value={inputValueMail}
-                  onChange={handleInputChangeMail}
+                  value={values.email}
+                  onChange={handleChange}
                   type="email"
                   label="Пошта"
                   placeholder="Введіть електронну пошту"
                 />
-              </form>
-            </CardBody>
-            <CardFooter className="flex justify-between flex-col gap-4 md:flex-row">
-              <Button
-                onClick={() => {
-                  handleSubmit();
-                }}
-                variant="solid"
-                className="bg-gray-900 font-bold w-full h-12 md:w-fit text-base text-white px-8 rounded-xl"
-              >
-                Додати юнака
-              </Button>
-              <Button
-                onClick={() => {
-                  toggleModal();
-                }}
-                variant="bordered"
-                className="bg-white text-gray-900 w-full h-12 md:w-fit text-base font-bold border-gray-900 rounded-xl"
-              >
-                Повернутися назад
-              </Button>
-            </CardFooter>
-          </Card>
-        </dialog>
-      )}
-    </>
-  );
-};
+                <ErrorMessage
+                  name="email"
+                  component="div"
+                  className="text-red-600"
+                />
+                <div className="flex justify-between flex-col gap-3 md:flex-row">
+                  <Button
+                    type="submit"
+                    variant="solid"
+                    className="bg-gray-900 font-bold w-full h-12 md:w-fit text-base text-white px-8 rounded-xl"
+                  >
+                    Додати юнака
+                  </Button>
+                  <Button
+                    onClick={onOpenChange}
+                    variant="bordered"
+                    className="bg-white mb-4 text-gray-900 w-full h-12 md:w-fit text-base font-bold border-gray-900 rounded-xl"
+                  >
+                    Повернутися назад
+                  </Button>
+                </div>
+              </Form>
+            )}
+          </Formik>
+        </ModalBody>
+      </ModalContent>
+    </Modal>
+  )
+}
 
-export default ModalWindow;
+export default ModalWindow
