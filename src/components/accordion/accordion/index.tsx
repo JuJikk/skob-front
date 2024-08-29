@@ -1,11 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react"
-import { Step, UserData } from "../../../types/accordion"
+import { Step } from "../../../types/accordion"
 import { useFindDataByEmail } from "../../../lib/data"
-import {
-  firstSample,
-  secondSample,
-  zeroSample,
-} from "../../../utils/const/probas"
 import AccordionMainItem from "../accordion-main-item"
 import { useQuery } from "@tanstack/react-query"
 import axios from "axios"
@@ -14,16 +9,13 @@ import { Accordion, AccordionItem } from "@nextui-org/accordion"
 import { Button, CircularProgress, useDisclosure } from "@nextui-org/react"
 import ModalAllProba from "../../modal/modal-all-proba"
 import { useCompletionPercentages } from "../../../lib/calculations"
+import { loadUserData } from "../../../lib/user-data-generator"
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 
-interface AccordionProps {
-  user?: UserData
-}
-
-const AccordionComponent: React.FC<AccordionProps> = () => {
+const AccordionComponent: React.FC = () => {
   const [steps, setSteps] = useState<Step[]>([])
   const { currentUserEmail, setCurrentUserEmail } = useSelectStore()
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
@@ -56,34 +48,13 @@ const AccordionComponent: React.FC<AccordionProps> = () => {
     enabled: !!currentUserEmailToFetch ,
   })
 
-
-  const loadUserData = useCallback(() => {
-    if (currentUserData) {
-      setSteps([
-        {
-          title: "Нульова проба",
-          data: zeroSample,
-          checked: currentUserData.zeroProba,
-          probaType: "zeroProba",
-        },
-        {
-          title: "Перша проба",
-          data: firstSample,
-          checked: currentUserData.firstProba,
-          probaType: "firstProba",
-        },
-        {
-          title: "Друга проба",
-          data: secondSample,
-          checked: currentUserData.secondProba,
-          probaType: "secondProba",
-        },
-      ])
-    }
+  const handleLoadUserData = useCallback(() => {
+    const loadedSteps = loadUserData({ currentUserData });
+    setSteps(loadedSteps);
   }, [currentUserData])
 
   useEffect(() => {
-    loadUserData()
+    handleLoadUserData()
   }, [currentUserData, currentUserEmailToFetch, loadUserData])
 
   const percentages = useCompletionPercentages(steps);

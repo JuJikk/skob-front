@@ -1,26 +1,18 @@
 import React, { useState, useEffect, useCallback } from "react"
-import { Step, UserData } from "../../../types/accordion"
-import {
-  firstSample,
-  secondSample,
-  zeroSample,
-} from "../../../utils/const/probas"
+import { Step } from "../../../types/accordion"
 import { useQuery } from "@tanstack/react-query"
 import axios from "axios"
 import { Accordion, AccordionItem } from "@nextui-org/accordion"
 import AccordionMainItem from "../accordion-main-item"
 import { CircularProgress } from "@nextui-org/react"
 import { useCompletionPercentages } from "../../../lib/calculations"
+import { loadUserData } from "../../../lib/user-data-generator"
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 
-interface AccordionProps {
-  user?: UserData
-}
-
-const AccordionUserComponent: React.FC<AccordionProps> = () => {
+const AccordionUserComponent: React.FC = () => {
   const [steps, setSteps] = useState<Step[]>([])
 
   const {
@@ -40,33 +32,13 @@ const AccordionUserComponent: React.FC<AccordionProps> = () => {
 
   const refetchData = () => refetch()
 
-  const loadUserData = useCallback(() => {
-    if (currentUserData) {
-      setSteps([
-        {
-          title: "Нульова проба",
-          data: zeroSample,
-          checked: currentUserData.zeroProba,
-          probaType: "zeroProba",
-        },
-        {
-          title: "Перша проба",
-          data: firstSample,
-          checked: currentUserData.firstProba,
-          probaType: "firstProba",
-        },
-        {
-          title: "Друга проба",
-          data: secondSample,
-          checked: currentUserData.secondProba,
-          probaType: "secondProba",
-        },
-      ])
-    }
+  const handleLoadUserData = useCallback(() => {
+    const loadedSteps = loadUserData({ currentUserData });
+    setSteps(loadedSteps);
   }, [currentUserData])
 
   useEffect(() => {
-    loadUserData()
+    handleLoadUserData()
   }, [currentUserData])
 
   const percentages = useCompletionPercentages(steps);
