@@ -54,14 +54,14 @@ const ModalAllProbaButton: React.FC<ModalWindowProps> = ({
             className="bg-gray-900 font-bold !w-full h-12 md:w-fit text-base text-white px-8 rounded-xl"
             onPress={onConfirm}
           >
-            Так!
+            Підписати!
           </Button>
           <Button
             variant="bordered"
             className="bg-white text-gray-900 !w-full h-12 md:w-fit text-base font-bold border-gray-900 rounded-xl"
             onPress={onOpenChange}
           >
-            Ні
+            Вже не хочу
           </Button>
         </ModalFooter>
       </ModalContent>

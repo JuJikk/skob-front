@@ -26,7 +26,6 @@ const validationSchema = Yup.object({
 
 const GenderModal: React.FC<GenderProps> = ({ isOpen, onOpenChange, userEmail }) => {
   const onSubmit = async (sex: string) => {
-    console.log(sex)
     if (userEmail) {
       await setUserSex(userEmail, sex)
     }

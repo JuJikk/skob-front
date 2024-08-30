@@ -6,11 +6,11 @@ import {
   zeroSample,
   zeroSampleFemale,
 } from "../../utils/const/probas.ts"
-import { Step } from "../../types/accordion.ts"
+import { Step, UserData } from "../../types/accordion.ts"
 
 
 interface LoadUserDataParams {
-  currentUserData: any;
+  currentUserData: UserData;
 }
 
 export const loadUserData = ({ currentUserData }: LoadUserDataParams): Step[] => {

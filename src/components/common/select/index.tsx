@@ -14,7 +14,7 @@ const UserSelect: React.FC = () => {
     <Select
       label={currentUserEmail}
       onChange={handleSelectChange}
-      className="ml-4 p-2 max-w-60 rounded-md"
+      className="p-2 max-w-60 rounded-md"
       size="sm"
     >
       {userData?.map((user: {email: string, name: string}) => (
