@@ -16,7 +16,7 @@ import {
 import React, { useState } from "react"
 import { Formik, FormikHelpers } from "formik"
 import { validationEditScoutSchema } from "../../../lib/schemas"
-import FormComp from "./FormComp.tsx"
+import EditForm from "./FormComp.tsx"
 
 interface ModalWindowProps {
   isOpen: boolean
@@ -96,7 +96,7 @@ const ModalEditScout: React.FC<ModalWindowProps> = ({
               onSubmit={onConfirm}
             >
               {({ setFieldValue, values }) => (
-                <FormComp
+                <EditForm
                   values={values}
                   setFieldValue={setFieldValue}
                   onOpenChange={onOpenChange}

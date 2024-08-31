@@ -11,12 +11,18 @@ interface FormCompProps {
   setCurrentUserEmail: React.Dispatch<React.SetStateAction<string>>
 }
 
-const FormComp: React.FC<FormCompProps> = ({
+const EditForm: React.FC<FormCompProps> = ({
   values,
   setFieldValue,
   onOpenChange,
   setCurrentUserEmail,
 }) => {
+
+  const handleSubmit = () => {
+    setCurrentUserEmail("")
+    onOpenChange()
+  }
+
   return (
     <Form className="space-y-4 w-full">
       <Field
@@ -51,10 +57,7 @@ const FormComp: React.FC<FormCompProps> = ({
         <Button
           variant="bordered"
           className="bg-white text-gray-900 !w-full h-12 md:w-fit text-base font-bold border-gray-900 rounded-xl"
-          onPress={() => {
-            setCurrentUserEmail("")
-            onOpenChange()
-          }}
+          onPress={handleSubmit}
         >
           Скасувати
         </Button>
@@ -63,4 +66,4 @@ const FormComp: React.FC<FormCompProps> = ({
   )
 }
 
-export default FormComp
+export default EditForm
