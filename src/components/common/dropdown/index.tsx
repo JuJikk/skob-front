@@ -33,7 +33,7 @@ const DropDown = () => {
             isBordered
             as="button"
             className="transition-transform"
-            src={user.picture}
+            src={user.picture ?? ""}
           />
         </DropdownTrigger>
         <DropdownMenu aria-label="Profile Actions" variant="flat">
@@ -59,10 +59,7 @@ const DropDown = () => {
           </DropdownItem>
 
           <DropdownItem
-            onClick={() => {
-              signOut();
-              location.reload();
-            }}
+            onClick={signOut}
             key="logout"
             startContent={<SignOut className="size-6" color="#000000" />}
             color="danger"

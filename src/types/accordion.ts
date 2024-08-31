@@ -13,7 +13,7 @@ export interface UserData {
     zeroProba: ProbaData;
     roles: string[];
     sex: string,
-    picture: string,
+    picture?: string,
 }
 
 export interface Step {
