@@ -9,8 +9,8 @@ import {
 } from "@nextui-org/react"
 import React from "react"
 import { ErrorMessage, Form, Formik } from "formik"
-import * as Yup from "yup"
 import { setUserSex } from "../../../lib/data"
+import { validationSexSchema } from "../../../lib/schemas"
 
 interface GenderProps {
   isOpen: boolean
@@ -18,17 +18,10 @@ interface GenderProps {
   userEmail: string | undefined
 }
 
-const validationSchema = Yup.object({
-  sex: Yup.string()
-    .oneOf(["MALE", "FEMALE"], "Виберіть правильну стать")
-    .required("Це поле є обов'язковим"),
-})
-
 const GenderModal: React.FC<GenderProps> = ({ isOpen, onOpenChange, userEmail }) => {
-  const onSubmit = async (sex: string) => {
-    console.log(sex)
+  const onSubmit = async (values: { sex: string }) => {
     if (userEmail) {
-      await setUserSex(userEmail, sex)
+      await setUserSex(userEmail, values.sex)
     }
     onOpenChange()
   }
@@ -51,10 +44,8 @@ const GenderModal: React.FC<GenderProps> = ({ isOpen, onOpenChange, userEmail })
             initialValues={{
               sex: "",
             }}
-            validationSchema={validationSchema}
-            onSubmit={(values) => {
-              onSubmit(values.sex)
-            }}
+            validationSchema={validationSexSchema}
+            onSubmit={onSubmit}
           >
             {({ setFieldValue, values }) => (
               <Form className="space-y-4 py-2">
