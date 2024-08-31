@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react"
 import { Step, UserData } from "../../../types/accordion"
-import { markAllProba, useFindDataByEmail } from "../../../lib/data"
+import { useFindDataByEmail } from "../../../lib/data"
 import {
   firstSample,
   secondSample,
@@ -53,10 +53,9 @@ const AccordionComponent: React.FC<AccordionProps> = () => {
       )
       return response.data
     },
-    enabled: !!currentUserEmailToFetch || !!rerenderState,
+    enabled: !!currentUserEmailToFetch ,
   })
 
-  const refetchData = () => refetch()
 
   const loadUserData = useCallback(() => {
     if (currentUserData) {
@@ -85,11 +84,7 @@ const AccordionComponent: React.FC<AccordionProps> = () => {
 
   useEffect(() => {
     loadUserData()
-  }, [currentUserData, currentUserEmailToFetch])
-
-  const handleModalConfirm = (probaName: string) => {
-    markAllProba(currentUserEmailToFetch, probaName)
-  }
+  }, [currentUserData, currentUserEmailToFetch, loadUserData])
 
   const percentages = useCompletionPercentages(steps);
   if (isLoading || isUserLoading) return "Завантажуємо проби..."
@@ -100,11 +95,10 @@ const AccordionComponent: React.FC<AccordionProps> = () => {
       {userData?.length > 0 && (
         <div className="max-w-[70rem] mx-auto px-8">
           <ModalAllProba
-            onConfirm={handleModalConfirm}
             onOpenChange={onOpenChange}
             isOpen={isOpen}
             userEmail={currentUserEmailToFetch}
-            refetchData={rerender}
+            refetchData={refetch}
           />
           <Button
             onClick={onOpen}

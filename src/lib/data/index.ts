@@ -27,6 +27,18 @@ export const markAllProba = async (email: string, probaName: string) => {
   )
 }
 
+export const setUserSex = async (email: string, sex: string) => {
+  await axios.patch(
+    `${BACKEND_URL}/users/${email}`,
+    {
+      sex
+    },
+    {
+      withCredentials: true,
+    }
+  )
+}
+
 export const useFindDataByEmail = () => {
   return useQuery({
     queryKey: ["userData"],
