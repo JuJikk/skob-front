@@ -6,12 +6,9 @@ import { useQuery } from "@tanstack/react-query"
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 
 export const addUser = async (email: string) => {
-  await axios.get(
-    `${BACKEND_URL}/invites/send/${email}`,
-    {
-      withCredentials: true,
-    }
-  )
+  await axios.get(`${BACKEND_URL}/invites/send/${email}`, {
+    withCredentials: true,
+  })
 }
 
 export const markAllProba = async (email: string, probaName: string) => {
@@ -31,7 +28,24 @@ export const setUserSex = async (email: string, sex: string) => {
   await axios.patch(
     `${BACKEND_URL}/users/${email}`,
     {
-      sex
+      sex,
+    },
+    {
+      withCredentials: true,
+    }
+  )
+}
+
+export const editUserData = async (
+  email: string,
+  name: string,
+  sex: string
+) => {
+  await axios.patch(
+    `${BACKEND_URL}/users/${email}`,
+    {
+      name,
+      sex,
     },
     {
       withCredentials: true,
@@ -53,7 +67,7 @@ export const useFindDataByEmail = () => {
 
 export const useFindUserDataByEmail = (email: string) => {
   return useQuery({
-    queryKey: ["currentUserData"],
+    queryKey: ["currentUserData", email],
     queryFn: async () => {
       const response = await axios.get(`${BACKEND_URL}/users/${email}`, {
         withCredentials: true,

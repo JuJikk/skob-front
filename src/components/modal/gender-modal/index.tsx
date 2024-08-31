@@ -10,15 +10,15 @@ import {
 import React from "react"
 import { ErrorMessage, Form, Formik } from "formik"
 import { setUserSex } from "../../../lib/data"
-import { validationSexSchema } from "../../../lib/schemas"
+import { validationGenderModalSchema } from "../../../lib/schemas"
 
-interface GenderProps {
+interface GenderModalProps {
   isOpen: boolean
   onOpenChange: () => void
   userEmail: string | undefined
 }
 
-const GenderModal: React.FC<GenderProps> = ({ isOpen, onOpenChange, userEmail }) => {
+const GenderModal: React.FC<GenderModalProps> = ({ isOpen, onOpenChange, userEmail }) => {
   const onSubmit = async (values: { sex: string }) => {
     if (userEmail) {
       await setUserSex(userEmail, values.sex)
@@ -44,7 +44,7 @@ const GenderModal: React.FC<GenderProps> = ({ isOpen, onOpenChange, userEmail })
             initialValues={{
               sex: "",
             }}
-            validationSchema={validationSexSchema}
+            validationSchema={validationGenderModalSchema}
             onSubmit={onSubmit}
           >
             {({ setFieldValue, values }) => (
