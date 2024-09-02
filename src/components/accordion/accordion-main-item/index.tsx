@@ -1,27 +1,7 @@
 import { useEffect, useState } from "react"
 import AccordionItem from "../accordion-item"
-import { ProbaData, Step } from "../../../types/accordion"
-
-type mergeDataProps = {
-  items: string[]
-  section: string
-}
-
-const mergeDataWithChecked = (
-  data: mergeDataProps[],
-  checked: ProbaData,
-  probaType: string
-) => {
-  return data.map((sectionObj, index) => {
-    const sectionKey = String.fromCharCode(97 + index)
-    return {
-      section: sectionObj.section,
-      items: sectionObj.items,
-      checked: checked[sectionKey],
-      probaType,
-    }
-  })
-}
+import { Step } from "../../../types/accordion"
+import { mergeDataWithChecked } from "../../../lib/merge-data"
 
 const AccordionMainItem = ({
   step,

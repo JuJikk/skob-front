@@ -1,11 +1,15 @@
 import {
   Button,
   Input,
-  Modal, ModalHeader, ModalBody, ModalContent,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalContent,
 } from "@nextui-org/react"
 import { Formik, Form, Field, ErrorMessage } from "formik"
-import * as Yup from "yup"
 import { addUser } from "../../../lib/data"
+import { validationSchemaAddUser } from "../../../types/yupSchemas"
+import { useState } from "react"
 
 interface ModalWindowProps {
   onOpenChange: () => void
@@ -13,22 +17,20 @@ interface ModalWindowProps {
 }
 
 const ModalWindow: React.FC<ModalWindowProps> = ({ onOpenChange, isOpen }) => {
-  const validationSchema = Yup.object({
-    email: Yup.string()
-      .email("Неправильний формат електронної пошти")
-      .required("Електронна пошта обов'язкова"),
-  })
-
+  const [showErrorMessage, setShowErrorMessage] = useState(false)
   const handleSubmit = (values: { email: string }) => {
-    addUser(values.email).then(() => onOpenChange())
+    addUser(values.email)
+      .then(() => onOpenChange())
+      .catch(() => setShowErrorMessage(true))
+  }
+
+  const handleClose = () => {
+    setShowErrorMessage(false)
+    onOpenChange()
   }
 
   return (
-    <Modal
-      placement="center"
-      isOpen={isOpen}
-      onOpenChange={onOpenChange}
-    >
+    <Modal placement="center" isOpen={isOpen} onOpenChange={handleClose}>
       <ModalContent>
         <ModalHeader className="flex gap-3">
           <p className="text-3xl mt-2 font-bold">Добавте юнака</p>
@@ -36,7 +38,7 @@ const ModalWindow: React.FC<ModalWindowProps> = ({ onOpenChange, isOpen }) => {
         <ModalBody>
           <Formik
             initialValues={{ email: "" }}
-            validationSchema={validationSchema}
+            validationSchema={validationSchemaAddUser}
             onSubmit={handleSubmit}
           >
             {({ handleChange, values }) => (
@@ -57,6 +59,9 @@ const ModalWindow: React.FC<ModalWindowProps> = ({ onOpenChange, isOpen }) => {
                   component="div"
                   className="text-red-600"
                 />
+                {showErrorMessage && (
+                  <span className="text-danger">Такої пошти не знайдено</span>
+                )}
                 <div className="flex justify-between flex-col gap-3 md:flex-row">
                   <Button
                     type="submit"
@@ -66,7 +71,7 @@ const ModalWindow: React.FC<ModalWindowProps> = ({ onOpenChange, isOpen }) => {
                     Додати юнака
                   </Button>
                   <Button
-                    onClick={onOpenChange}
+                    onClick={handleClose}
                     variant="bordered"
                     className="bg-white mb-4 text-gray-900 w-full h-12 md:w-fit text-base font-bold border-gray-900 rounded-xl"
                   >

@@ -3,7 +3,7 @@ import Accordion from "./components/accordion/accordion"
 import { NavBar } from "./components/layout/navbar"
 import GenderModal from "./components/modal/gender-modal/index.tsx"
 import AccordionUserComponent from "./components/user-accordion/accordion"
-import { useUserStore } from "./lib/auth/useUser.tsx"
+import { useUserStore } from "./lib/auth/useUser.ts"
 import { useEffect } from "react"
 
 function App() {
@@ -23,10 +23,10 @@ function App() {
     <div>
       <GenderModal userEmail={user?.email} isOpen={isOpen} onOpenChange={onOpenChange} />
       <NavBar />
-      {user?.roles[0] === "FOREMAN" ? (
-        <Accordion />
+      {user?.roles[0] === "SCOUT" ? (
+          <AccordionUserComponent />
       ) : (
-        <AccordionUserComponent />
+        <Accordion />
       )}
     </div>
   )

@@ -3,10 +3,13 @@ import { Step } from "../../../types/accordion"
 import { useQuery } from "@tanstack/react-query"
 import axios from "axios"
 import { Accordion, AccordionItem } from "@nextui-org/accordion"
-import AccordionMainItem from "../accordion-main-item"
 import { CircularProgress } from "@nextui-org/react"
 import { useCompletionPercentages } from "../../../lib/calculations"
 import { loadUserData } from "../../../lib/user-data-generator"
+import AccordionMainItem from "../accordion-main-item"
+import Loader from "../../common/loader"
+import ErrorMessage from "../../common/error-message"
+import NextSteps from "../../common/next-steps-message"
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
@@ -19,7 +22,6 @@ const AccordionUserComponent: React.FC = () => {
     data: currentUserData,
     isLoading: isUserLoading,
     error: userDataError,
-    refetch,
   } = useQuery({
     queryKey: ["currentUserData"],
     queryFn: async () => {
@@ -30,8 +32,6 @@ const AccordionUserComponent: React.FC = () => {
     },
   })
 
-  const refetchData = () => refetch()
-
   const handleLoadUserData = useCallback(() => {
     const loadedSteps = loadUserData({ currentUserData });
     setSteps(loadedSteps);
@@ -39,12 +39,13 @@ const AccordionUserComponent: React.FC = () => {
 
   useEffect(() => {
     handleLoadUserData()
-  }, [currentUserData])
+  }, [currentUserData, handleLoadUserData])
 
   const percentages = useCompletionPercentages(steps);
 
-  if (isUserLoading) return "Завантажуємо проби..."
-  if (userDataError) return "An error has occurred."
+  if (isUserLoading) return <Loader label="Завантажуємо пробу..." />
+  if (userDataError) return <ErrorMessage/>
+  if (!currentUserData.ownerEmail) return <NextSteps sex={currentUserData.sex}/>
 
   return (
     <>
@@ -53,6 +54,7 @@ const AccordionUserComponent: React.FC = () => {
           {steps.map((step, index) => (
             <AccordionItem
               className="text-2xl font-bold"
+              aria-label={`Accordion item: ${step.title}`}
               key={index}
               title={
                 <div className="flex justify-between items-center w-full rounded-t-lg">
@@ -67,12 +69,12 @@ const AccordionUserComponent: React.FC = () => {
                     value={percentages[index]}
                     strokeWidth={4}
                     showValueLabel={true}
+                    aria-label={`Progress: ${percentages[index]}%`}
                   />
                 </div>
               }
             >
               <AccordionMainItem
-                refetchData={refetchData}
                 step={step}
                 currentProbaEmail={currentUserData.email}
               />

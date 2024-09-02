@@ -10,7 +10,7 @@ import {
 import React from "react"
 import { ErrorMessage, Form, Formik } from "formik"
 import { setUserSex } from "../../../lib/data"
-import { validationGenderModalSchema } from "../../../lib/schemas"
+import { validationGenderModalSchema } from "../../../types/yupSchemas"
 
 interface GenderModalProps {
   isOpen: boolean

@@ -1,6 +1,6 @@
 import { NextUIProvider } from "@nextui-org/react"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { useUserStore } from "../../lib/auth/useUser.tsx"
+import { useUserStore } from "../../lib/auth/useUser.ts"
 import { useEffect } from "react"
 
 export function Providers({ children }: { children: React.ReactNode }) {

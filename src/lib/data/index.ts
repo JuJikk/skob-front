@@ -53,6 +53,25 @@ export const editUserData = async (
   )
 }
 
+export const updateProbaStatus = async (
+  currentProbaEmail: string,
+  probaName: string,
+  probaSubName: string,
+  probaIndex: number,
+  value: number
+) => {
+  return axios.patch(
+    `${BACKEND_URL}/probas/${currentProbaEmail}`,
+    {
+      probaName,
+      probaSubName,
+      probaIndex,
+      value,
+    },
+    { withCredentials: true }
+  );
+};
+
 export const useFindDataByEmail = () => {
   return useQuery({
     queryKey: ["userData"],

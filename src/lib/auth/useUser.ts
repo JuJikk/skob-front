@@ -1,5 +1,5 @@
 import axios from "axios";
-import create from "zustand";
+import { create } from "zustand";
 import { UserData } from "../../types/accordion.ts";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment

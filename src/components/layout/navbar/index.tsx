@@ -1,6 +1,7 @@
-import { useUserStore } from "../../../lib/auth/useUser.tsx"
+import { useUserStore } from "../../../lib/auth/useUser.ts"
 import UserSelect from "../../common/select"
 import DropDown from "../../common/dropdown"
+import DropDownScout from "../../common/dropdown-scout"
 
 export const NavBar = () => {
   const { user } = useUserStore((state) => ({
@@ -19,7 +20,7 @@ export const NavBar = () => {
           <UserSelect />
         </div>
       )}
-      <DropDown/>
+      {user?.roles[0] === "FOREMAN" ? <DropDown/> : <DropDownScout/>}
     </div>
   )
 }

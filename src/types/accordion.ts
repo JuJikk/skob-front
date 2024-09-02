@@ -34,3 +34,14 @@ export type Props = {
     currentStep: string;
     refetchData: () => void;
 };
+
+export type ScoutProps = {
+    item: {
+        section: string;
+        items: string[];
+        checked: number[];
+        probaType: string;
+    };
+    currentProbaEmail: string;
+    currentStep: string;
+};

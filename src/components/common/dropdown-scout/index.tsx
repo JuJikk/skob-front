@@ -8,24 +8,14 @@ import {
 } from "@nextui-org/react"
 import { useUserStore } from "../../../lib/auth/useUser.ts"
 import { signOut } from "../../../lib/auth/userActions.ts"
-import {
-  PencilSimpleLine,
-  PenNib,
-  PlusCircle,
-  SignOut,
-} from "@phosphor-icons/react"
-import { useModalStore } from "../../../lib/contex/SignAllProbaModal.tsx"
+import { SignOut } from "@phosphor-icons/react"
 import ModalEditScout from "../../modal/edit-scout-modal"
 import ModalWindow from "../../modal/modal-add-scout"
 
-const DropDown = () => {
-  const { openModal } = useModalStore()
-  const { isOpen, onOpen, onOpenChange } = useDisclosure()
-  const {
-    isOpen: isOpenAddScout,
-    onOpen: onOpenAddScout,
-    onOpenChange: onOpenChangeAddScout,
-  } = useDisclosure()
+const DropDownScout = () => {
+  const { isOpen, onOpenChange } = useDisclosure()
+  const { isOpen: isOpenAddScout, onOpenChange: onOpenChangeAddScout } =
+    useDisclosure()
   const { user } = useUserStore((state) => ({
     user: state.user,
   }))
@@ -59,33 +49,6 @@ const DropDown = () => {
           </DropdownItem>
 
           <DropdownItem
-            startContent={<PlusCircle className="size-6" />}
-            textValue="Add scout"
-            key="add"
-            onClick={onOpenAddScout}
-          >
-            Додати юнака/юначку
-          </DropdownItem>
-
-          <DropdownItem
-            startContent={<PenNib className="size-6" color="#000" />}
-            textValue="Sign proba"
-            key="sign"
-            onClick={openModal}
-          >
-            Підписати цілу пробу
-          </DropdownItem>
-
-          <DropdownItem
-            key="edit"
-            startContent={<PencilSimpleLine className="size-6" />}
-            textValue="Edit scout"
-            onClick={onOpen}
-          >
-            Редагувати інформацію про юнаків
-          </DropdownItem>
-
-          <DropdownItem
             onClick={signOut}
             textValue="Logout"
             key="logout"
@@ -101,4 +64,4 @@ const DropDown = () => {
   )
 }
 
-export default DropDown
+export default DropDownScout

@@ -7,7 +7,7 @@ import {
   Select,
   SelectItem,
 } from "@nextui-org/react"
-import { useUserStore } from "../../../lib/auth/useUser.tsx"
+import { useUserStore } from "../../../lib/auth/useUser.ts"
 import {
   editUserData,
   useFindDataByEmail,
@@ -15,8 +15,8 @@ import {
 } from "../../../lib/data"
 import React, { useState } from "react"
 import { Formik, FormikHelpers } from "formik"
-import { validationEditScoutSchema } from "../../../lib/schemas"
 import EditForm from "./FormComp.tsx"
+import { validationEditScoutSchema } from "../../../types/yupSchemas.ts"
 
 interface ModalWindowProps {
   isOpen: boolean
@@ -33,6 +33,7 @@ const ModalEditScout: React.FC<ModalWindowProps> = ({
   onOpenChange,
 }) => {
   const [currentUserEmail, setCurrentUserEmail] = useState<string>("")
+  const [showErrorMessage, setShowErrorMessage] = useState(false)
   const { user } = useUserStore((state) => ({
     user: state.user,
   }))
@@ -42,21 +43,32 @@ const ModalEditScout: React.FC<ModalWindowProps> = ({
     values: FormValues,
     actions: FormikHelpers<FormValues>
   ) => {
-    await editUserData(currentUserEmail, values.name, values.sex)
-    setCurrentUserEmail("")
-    onOpenChange()
-    actions.setSubmitting(false)
+    try {
+      await editUserData(currentUserEmail, values.name, values.sex)
+      setCurrentUserEmail("")
+      setShowErrorMessage(false)
+      onOpenChange()
+      actions.setSubmitting(false)
+    } catch {
+      setShowErrorMessage(true)
+    }
   }
 
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setCurrentUserEmail(e.target.value)
   }
 
+  const handeClose = () => {
+    setShowErrorMessage(false)
+    setCurrentUserEmail("")
+    onOpenChange()
+  }
+
   const { data: currentUserData, isLoading: isUserLoading } =
     useFindUserDataByEmail(currentUserEmail)
 
   return (
-    <Modal placement="center" isOpen={isOpen} onOpenChange={onOpenChange}>
+    <Modal placement="center" isOpen={isOpen} onOpenChange={handeClose}>
       <ModalContent>
         <ModalHeader className="flex flex-col gap-1 mx-auto pb-0">
           <span className="mb-4">Виберіть чиї дані ви хочете змінити</span>
@@ -79,7 +91,7 @@ const ModalEditScout: React.FC<ModalWindowProps> = ({
               <Button
                 variant="bordered"
                 className="bg-white text-gray-900 !w-full h-12 md:w-fit text-base font-bold border-gray-900 rounded-xl mt-4"
-                onPress={onOpenChange}
+                onPress={handeClose}
               >
                 {user?.sex === "MALE" ? "Я передумав" : "Я передумала"}
               </Button>
@@ -96,12 +108,19 @@ const ModalEditScout: React.FC<ModalWindowProps> = ({
               onSubmit={onConfirm}
             >
               {({ setFieldValue, values }) => (
-                <EditForm
-                  values={values}
-                  setFieldValue={setFieldValue}
-                  onOpenChange={onOpenChange}
-                  setCurrentUserEmail={setCurrentUserEmail}
-                />
+                <>
+                  <EditForm
+                    values={values}
+                    setFieldValue={setFieldValue}
+                    onOpenChange={onOpenChange}
+                    setCurrentUserEmail={setCurrentUserEmail}
+                  />
+                  {showErrorMessage && (
+                    <span className="text-danger text-medium font-normal my-1">
+                      Ви не можете підписати цю пробу не завершивши попередню
+                    </span>
+                  )}
+                </>
               )}
             </Formik>
           )}
