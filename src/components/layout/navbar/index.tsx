@@ -1,6 +1,7 @@
-import { useUserStore } from "../../../lib/auth/useUser.tsx"
+import { useUserStore } from "../../../lib/auth/useUser.ts"
 import UserSelect from "../../common/select"
-import DropDown from "../../common/dropdown"
+import DropDown from "../../dropdowns/dropdown"
+import DropDownScout from "../../dropdowns/dropdown-scout"
 
 export const NavBar = () => {
   const { user } = useUserStore((state) => ({
@@ -8,7 +9,7 @@ export const NavBar = () => {
   }))
 
   return (
-    <div className="flex md:mb-8 mt-4 mx-auto px-4 gap-2 max-w-[1104px] justify-between">
+    <div className="flex mb-3 mt-4 mx-auto px-4 gap-2 max-w-[1104px] justify-between">
       <img
         className="h-5 md:h-9 lg:h-12 my-auto"
         src="../../../../public/logo.svg"
@@ -19,7 +20,7 @@ export const NavBar = () => {
           <UserSelect />
         </div>
       )}
-      <DropDown/>
+      {user?.roles[0] === "FOREMAN" ? <DropDown/> : <DropDownScout/>}
     </div>
   )
 }

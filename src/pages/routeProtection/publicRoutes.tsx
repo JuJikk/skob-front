@@ -1,5 +1,7 @@
 import { Navigate } from "react-router-dom";
-import { useUserStore } from "../../lib/auth/useUser.tsx";
+import { useUserStore } from "../../lib/auth/useUser.ts";
+import Loader from "../../components/common/loader"
+import React from "react"
 
 interface PublicRouteProps {
   children: React.ReactNode;
@@ -12,14 +14,12 @@ export function PublicRoute({ children }: PublicRouteProps) {
   }));
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <Loader label="Завантаження..." />;
   }
 
-  // Якщо користувач авторизований, перенаправляємо на головну сторінку
   if (user && !isLoading) {
     return <Navigate to="/" replace />;
   }
 
-  // Якщо користувач не авторизований, дозволяємо доступ до сторінки
   return <>{children}</>;
 }

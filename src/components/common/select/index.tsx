@@ -1,10 +1,11 @@
-import { useSelectStore } from "../../../lib/contex/selectButton.tsx"
-import { useFindDataByEmail } from "../../../lib/data"
+import { useSelectStore } from "../../../lib/contex/selectButton.ts"
+import { useFindAllData } from "../../../lib/data"
 import { Select, SelectItem } from "@nextui-org/react"
+import React from "react"
 
 const UserSelect: React.FC = () => {
   const { currentUserEmail, setCurrentUserEmail } = useSelectStore();
-  const { data: userData } = useFindDataByEmail();
+  const { data: userData } = useFindAllData();
 
   const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setCurrentUserEmail(event.target.value);
@@ -16,6 +17,7 @@ const UserSelect: React.FC = () => {
       onChange={handleSelectChange}
       className="p-2 max-w-60 rounded-md"
       size="sm"
+      aria-label="users select"
     >
       {userData?.map((user: {email: string, name: string}) => (
         <SelectItem key={user.email}>

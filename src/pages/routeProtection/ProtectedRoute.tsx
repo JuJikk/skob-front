@@ -1,5 +1,7 @@
 import { Navigate } from "react-router-dom";
-import { useUserStore } from "../../lib/auth/useUser.tsx"
+import { useUserStore } from "../../lib/auth/useUser.ts"
+import Loader from "../../components/common/loader"
+import React from "react"
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -12,14 +14,12 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   }));
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <Loader label="Завантаження..." />
   }
 
-  // Redirect to login if not authenticated
   if (!user && !isLoading) {
     return <Navigate to="/login" replace />;
   }
 
-  // Allow access to protected route if authenticated
   return <>{children}</>;
 }

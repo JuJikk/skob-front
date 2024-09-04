@@ -1,56 +1,28 @@
 import React, { useEffect, useRef, useState } from "react"
-import { useMutation } from "@tanstack/react-query"
-import axios from "axios"
-import ModalCheckoutButton from "../../modal/modal-checkout-button"
-import { Props } from "../../../types/accordion.ts"
 import { Checkbox, useDisclosure } from "@nextui-org/react"
 import { CaretDown } from "@phosphor-icons/react"
+import ModalCheckoutButton from "../../modal/modal-checkout-button"
+import { Props } from "../../../types/accordion.ts"
+import { updateProbaStatus } from "../../../lib/data"
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
-
-const AccordionItem = ({ item, currentProbaEmail, currentStep, refetchData }: Props) => {
-  const [openLoader, setOpenLoader] = useState(false)
+const AccordionItem = ({
+  item,
+  currentProbaEmail,
+  currentStep,
+  refetchData,
+}: Props) => {
+  const [isLoading, setIsLoading] = useState(false)
   const [isAccordionOpen, setIsAccordionOpen] = useState(false)
   const descriptionRef = useRef<HTMLDivElement>(null)
   const [indexesSum, setIndexesSum] = useState(0)
   const [pendingIndex, setPendingIndex] = useState<number | null>(null)
   const [pendingChecked, setPendingChecked] = useState<boolean | null>(null)
-  const {isOpen, onOpen, onOpenChange} = useDisclosure();
+  const { isOpen, onOpen, onOpenChange } = useDisclosure()
+  const [errorMessage, setErrorMessage] = useState("")
 
   useEffect(() => {
-    const count = () => item.checked.reduce((acc, num) => acc + num, 0)
-    setIndexesSum(count)
+    setIndexesSum(item.checked.reduce((acc, num) => acc + num, 0))
   }, [item.checked])
-
-  const toggleAccordion = () => {
-    setIsAccordionOpen(!isAccordionOpen)
-  }
-
-  const mutation = useMutation({
-    mutationFn: ({ probaName, probaSubName, probaIndex, value }: any) => {
-      return axios.patch(
-        `${BACKEND_URL}/probas/${currentProbaEmail}`,
-        {
-          probaName,
-          probaSubName,
-          probaIndex,
-          value,
-        },
-        { withCredentials: true }
-      )
-    },
-    onSuccess: (_data, variables) => {
-      item.checked[variables.index] = variables.value
-      const newSum = item.checked.reduce((acc, num) => acc + num, 0)
-      setIndexesSum(newSum)
-      refetchData()
-    },
-    onError: (error) => {
-      console.error("Error updating checked status:", error)
-    },
-  })
 
   const handleCheckboxChange =
     (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -59,35 +31,48 @@ const AccordionItem = ({ item, currentProbaEmail, currentStep, refetchData }: Pr
       onOpen()
     }
 
-  const handleModalConfirm = () => {
+  const handleModalConfirm = async () => {
     if (pendingIndex !== null && pendingChecked !== null) {
-      setOpenLoader(true)
-      mutation.mutate(
-        {
-          probaName: item.probaType,
-          probaSubName: currentStep,
-          probaIndex: pendingIndex,
-          value: pendingChecked ? 1 : 0,
-        },
-        {
-          onSettled: () => {
-            setPendingIndex(null)
-            setPendingChecked(null)
-            onOpenChange()
-            setOpenLoader(false)
-          },
+      setIsLoading(true)
+      try {
+        await updateProbaStatus(
+          currentProbaEmail,
+          item.probaType,
+          currentStep,
+          pendingIndex,
+          pendingChecked ? 1 : 0
+        )
+        item.checked[pendingIndex] = pendingChecked ? 1 : 0
+        setIndexesSum(item.checked.reduce((acc, num) => acc + num, 0))
+        onOpenChange()
+        setIsLoading(false)
+        refetchData()
+      } catch (e) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        const errorMessage = e.response.data.message
+        setIsLoading(false)
+        if (Array.isArray(errorMessage)) {
+          setErrorMessage(errorMessage[0])
+        } else {
+          setErrorMessage(errorMessage)
         }
-      )
+      }
     }
   }
 
+  const toggleAccordion = () => setIsAccordionOpen(!isAccordionOpen)
+
   return (
-    <div className="flex flex-col border-b border-gray-200 w-[95%] mx-auto">
+    <div className="flex flex-col w-[95%] mx-auto">
       <ModalCheckoutButton
-        onLoading={openLoader}
+        onLoading={isLoading}
         onConfirm={handleModalConfirm}
         onOpenChange={onOpenChange}
         isOpen={isOpen}
+        isLoaded={isLoading}
+        pendingChecked={pendingChecked}
+        errorMessage={errorMessage}
       />
       <div
         className="flex justify-between items-center py-4 cursor-pointer"
@@ -97,6 +82,7 @@ const AccordionItem = ({ item, currentProbaEmail, currentStep, refetchData }: Pr
           {item.section} ({indexesSum} / {item.items.length})
         </span>
         <button
+          aria-label="toggle button"
           className={`transition-transform duration-300 ${
             isAccordionOpen ? "rotate-90" : "rotate-0"
           }`}
@@ -110,9 +96,9 @@ const AccordionItem = ({ item, currentProbaEmail, currentStep, refetchData }: Pr
           isAccordionOpen ? "max-h-screen" : "max-h-0"
         }`}
       >
-        <ol className="list-decimal list-inside">
+        <ol>
           {item.items.map((subItem, index) => (
-            <div key={index} className="flex">
+            <li key={index} className="flex">
               <Checkbox
                 onChange={handleCheckboxChange(index)}
                 isSelected={!!item.checked[index]}
@@ -120,10 +106,14 @@ const AccordionItem = ({ item, currentProbaEmail, currentStep, refetchData }: Pr
                 color="default"
                 type="checkbox"
               />
-              <li className={`text-base mb-2 font-normal ${item.checked[index] ? "text-[#A1A1AA] line-through" : ""}`}>
-                {subItem}
-              </li>
-            </div>
+              <span
+                className={`text-base mb-2 font-normal ${
+                  item.checked[index] ? "text-[#A1A1AA] line-through" : ""
+                }`}
+              >
+                {index + 1}. {subItem}
+              </span>
+            </li>
           ))}
         </ol>
       </div>

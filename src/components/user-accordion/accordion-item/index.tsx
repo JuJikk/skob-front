@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { Props } from "../../../types/accordion.ts";
+import { ScoutProps } from "../../../types/accordion.ts"
 import { CaretDown } from "@phosphor-icons/react";
 
-const AccordionItem = ({ item }: Props) => {
+const AccordionItem = ({ item }: ScoutProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const descriptionRef = useRef<HTMLDivElement>(null);
   const [indaxesSum, setIndaxesSum] = useState(0);
@@ -17,15 +17,18 @@ const AccordionItem = ({ item }: Props) => {
   };
 
   return (
-    <div className="flex flex-col border-b border-gray-200 w-[95%] mx-auto">
+    <div className="flex flex-col w-[95%] mx-auto">
       <div
         className="flex justify-between items-center py-4 cursor-pointer"
         onClick={toggleAccordion}
+        role="button"
+        aria-label="toggle accordion"
       >
         <span className="text-base font-medium md:font-semibold">
           {item.section} ({indaxesSum} / {item.items.length})
         </span>
         <button
+          aria-label="toggle accordion button"
           className={`transition-transform duration-300 ${
             isOpen ? "rotate-90" : "rotate-0"
           }`}
@@ -34,6 +37,7 @@ const AccordionItem = ({ item }: Props) => {
         </button>
       </div>
       <div
+        id={`accordion-content-${item.section}`}
         ref={descriptionRef}
         className={`overflow-auto transition-all duration-200 ease-in-out ${
           isOpen ? "max-h-screen" : "max-h-0"
