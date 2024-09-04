@@ -14,7 +14,7 @@ import {
   PlusCircle,
   SignOut,
 } from "@phosphor-icons/react"
-import { useModalStore } from "../../../lib/contex/SignAllProbaModal.tsx"
+import { useModalStore } from "../../../lib/contex/SignAllProbaModal.ts"
 import ModalEditScout from "../../modal/edit-scout-modal"
 import ModalWindow from "../../modal/modal-add-scout"
 

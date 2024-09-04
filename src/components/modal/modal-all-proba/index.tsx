@@ -24,43 +24,52 @@ const ModalAllProbaButton: React.FC<ModalWindowProps> = ({
   refetchData,
 }) => {
   const [probaToMark, setProbaToMark] = useState("")
-  const [showErrorMessage, setShowErrorMessage] = useState(false)
+  const [errorMessage, setErrorMessage] = useState("")
 
   const onConfirm = async () => {
     try {
       await markAllProba(userEmail, probaToMark)
       onOpenChange()
+      setErrorMessage("")
       refetchData()
-    } catch {
-      setShowErrorMessage(true)
+    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      const errorMessage = e.response.data.message
+      if (Array.isArray(errorMessage)) {
+        setErrorMessage(errorMessage[0])
+      } else {
+        setErrorMessage(errorMessage)
+      }
     }
   }
 
   const handleClose = () => {
     onOpenChange()
-    setShowErrorMessage(false)
+    setErrorMessage("")
   }
 
   return (
     <Modal placement="center" isOpen={isOpen} onOpenChange={handleClose}>
       <ModalContent>
-        <ModalHeader className="flex flex-col gap-1 mx-auto">
+        <ModalHeader className="flex flex-col pb-0 gap-1 mx-auto">
           <span className="mb-4">Яку пробу ти хочеш підписати?</span>
           <Select
             placeholder="Виберіть пробу"
             selectionMode="single"
             className="max-w-xs"
-            onChange={(e) => {
-              setProbaToMark(e.target.value)
-            }}
+            aria-label="Choose proba"
+            onChange={(e) => setProbaToMark(e.target.value)}
           >
             <SelectItem key="zeroProba">Нульва проба</SelectItem>
             <SelectItem key="firstProba">Перша проба</SelectItem>
             <SelectItem key="secondProba">Друга проба</SelectItem>
           </Select>
-          {showErrorMessage && (
-            <span className="text-danger text-medium font-normal my-1">Ви не можете підписати цю пробу не завершивши попередню</span>
-          )}
+          <div className="h-[1.5rem] flex items-start">
+            {errorMessage && (
+              <span className="text-danger text-sm font-normal">{errorMessage}</span>
+            )}
+          </div>
         </ModalHeader>
         <ModalFooter className="flex justify-center pt-0">
           <Button

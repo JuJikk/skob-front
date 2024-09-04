@@ -4,18 +4,12 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-  useDisclosure,
 } from "@nextui-org/react"
 import { useUserStore } from "../../../lib/auth/useUser.ts"
 import { signOut } from "../../../lib/auth/userActions.ts"
 import { SignOut } from "@phosphor-icons/react"
-import ModalEditScout from "../../modal/edit-scout-modal"
-import ModalWindow from "../../modal/modal-add-scout"
 
 const DropDownScout = () => {
-  const { isOpen, onOpenChange } = useDisclosure()
-  const { isOpen: isOpenAddScout, onOpenChange: onOpenChangeAddScout } =
-    useDisclosure()
   const { user } = useUserStore((state) => ({
     user: state.user,
   }))
@@ -24,11 +18,6 @@ const DropDownScout = () => {
 
   return (
     <div className="my-auto">
-      <ModalWindow
-        isOpen={isOpenAddScout}
-        onOpenChange={onOpenChangeAddScout}
-      />
-      <ModalEditScout isOpen={isOpen} onOpenChange={onOpenChange} />
       <Dropdown placement="bottom-end">
         <DropdownTrigger>
           <Avatar

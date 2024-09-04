@@ -72,7 +72,7 @@ export const updateProbaStatus = async (
   );
 };
 
-export const useFindDataByEmail = () => {
+export const useFindAllData = () => {
   return useQuery({
     queryKey: ["userData"],
     queryFn: async () => {

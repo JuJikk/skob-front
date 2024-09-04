@@ -1,5 +1,7 @@
 import { Navigate } from "react-router-dom";
 import { useUserStore } from "../../lib/auth/useUser.ts"
+import Loader from "../../components/common/loader"
+import React from "react"
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -12,7 +14,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   }));
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <Loader label="Завантаження..." />
   }
 
   if (!user && !isLoading) {

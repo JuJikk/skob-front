@@ -1,22 +1,22 @@
 import React, { useState, useEffect, useCallback } from "react"
 import { Step } from "../../../types/accordion"
-import { useFindDataByEmail, useFindUserDataByEmail } from "../../../lib/data"
+import { useFindAllData, useFindUserDataByEmail } from "../../../lib/data"
 import AccordionMainItem from "../accordion-main-item"
-import { useSelectStore } from "../../../lib/contex/selectButton.tsx"
+import { useSelectStore } from "../../../lib/contex/selectButton.ts"
 import { Accordion, AccordionItem } from "@nextui-org/accordion"
 import { CircularProgress } from "@nextui-org/react"
-import { useCompletionPercentages } from "../../../lib/calculations"
 import { loadUserData } from "../../../lib/user-data-generator"
 import ModalAllProba from "../../modal/modal-all-proba"
-import { useModalStore } from "../../../lib/contex/SignAllProbaModal.tsx"
+import { useModalStore } from "../../../lib/contex/SignAllProbaModal.ts"
 import ErrorMessage from "../../common/error-message/index.tsx"
 import ForemanNextSteps from "../../common/foreman-info-message/index.tsx"
 import Loader from "../../common/loader/index.tsx"
+import { useCompletionPercentages } from "../../../lib/calculations"
 
 const AccordionComponent: React.FC = () => {
   const [steps, setSteps] = useState<Step[]>([]);
   const { currentUserEmail, setCurrentUserEmail } = useSelectStore();
-  const { data: userData, error: userError, isLoading } = useFindDataByEmail();
+  const { data: userData, error: userError, isLoading } = useFindAllData();
   const { isOpen, closeModal, setRefetchData } = useModalStore();
 
   useEffect(() => {
@@ -35,6 +35,7 @@ const AccordionComponent: React.FC = () => {
   } = useFindUserDataByEmail(currentUserEmailToFetch);
 
   const handleLoadUserData = useCallback(() => {
+    console.log("refetched")
     const loadedSteps = loadUserData({ currentUserData });
     setSteps(loadedSteps);
   }, [currentUserData]);
@@ -83,7 +84,7 @@ const AccordionComponent: React.FC = () => {
                       value={percentages[index]}
                       strokeWidth={4}
                       showValueLabel={true}
-                      aria-label={`Progress: ${percentages[index]}%`}
+                      aria-label="progress"
                     />
                   </div>
                 }

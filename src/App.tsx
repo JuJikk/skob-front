@@ -20,7 +20,7 @@ function App() {
   }, [user?.sex, onOpen])
 
   return (
-    <div>
+    <>
       <GenderModal userEmail={user?.email} isOpen={isOpen} onOpenChange={onOpenChange} />
       <NavBar />
       {user?.roles[0] === "SCOUT" ? (
@@ -28,7 +28,7 @@ function App() {
       ) : (
         <Accordion />
       )}
-    </div>
+    </>
   )
 }
 

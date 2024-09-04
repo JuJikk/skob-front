@@ -28,6 +28,7 @@ const EditForm: React.FC<FormCompProps> = ({
       <Field
         as={Input}
         id="name"
+        size="md"
         name="name"
         label="Введіть прізвище та ім'я"
         required

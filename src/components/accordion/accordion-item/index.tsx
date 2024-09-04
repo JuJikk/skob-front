@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react"
-import { useMutation } from "@tanstack/react-query"
 import { Checkbox, useDisclosure } from "@nextui-org/react"
 import { CaretDown } from "@phosphor-icons/react"
 import ModalCheckoutButton from "../../modal/modal-checkout-button"
@@ -12,50 +11,18 @@ const AccordionItem = ({
   currentStep,
   refetchData,
 }: Props) => {
-  const [openLoader, setOpenLoader] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [isAccordionOpen, setIsAccordionOpen] = useState(false)
   const descriptionRef = useRef<HTMLDivElement>(null)
   const [indexesSum, setIndexesSum] = useState(0)
   const [pendingIndex, setPendingIndex] = useState<number | null>(null)
   const [pendingChecked, setPendingChecked] = useState<boolean | null>(null)
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
+  const [errorMessage, setErrorMessage] = useState("")
 
   useEffect(() => {
     setIndexesSum(item.checked.reduce((acc, num) => acc + num, 0))
   }, [item.checked])
-
-  const mutation = useMutation({
-    mutationFn: ({
-      probaName,
-      probaSubName,
-      probaIndex,
-      value,
-    }: {
-      probaName: string
-      probaSubName: string
-      probaIndex: number
-      value: number
-    }) =>
-      updateProbaStatus(
-        currentProbaEmail,
-        probaName,
-        probaSubName,
-        probaIndex,
-        value
-      ),
-    onSuccess: (_data, variables) => {
-      item.checked[variables.probaIndex] = variables.value
-      setIndexesSum(item.checked.reduce((acc, num) => acc + num, 0))
-      refetchData()
-      onOpenChange()
-    },
-    onError: (error) => {
-      console.error("Error updating checked status:", error)
-    },
-    onSettled: () => {
-      setOpenLoader(false)
-    },
-  })
 
   const handleCheckboxChange =
     (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,32 +31,48 @@ const AccordionItem = ({
       onOpen()
     }
 
-  const handleModalConfirm = () => {
+  const handleModalConfirm = async () => {
     if (pendingIndex !== null && pendingChecked !== null) {
-      setOpenLoader(true)
-      mutation.mutate({
-        probaName: item.probaType,
-        probaSubName: currentStep,
-        probaIndex: pendingIndex,
-        value: pendingChecked ? 1 : 0,
-      })
+      setIsLoading(true)
+      try {
+        await updateProbaStatus(
+          currentProbaEmail,
+          item.probaType,
+          currentStep,
+          pendingIndex,
+          pendingChecked ? 1 : 0
+        )
+        item.checked[pendingIndex] = pendingChecked ? 1 : 0
+        setIndexesSum(item.checked.reduce((acc, num) => acc + num, 0))
+        onOpenChange()
+        setIsLoading(false)
+        refetchData()
+      } catch (e) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        const errorMessage = e.response.data.message
+        setIsLoading(false)
+        if (Array.isArray(errorMessage)) {
+          setErrorMessage(errorMessage[0])
+        } else {
+          setErrorMessage(errorMessage)
+        }
+      }
     }
   }
 
   const toggleAccordion = () => setIsAccordionOpen(!isAccordionOpen)
 
   return (
-    <div className="flex flex-col border-b border-gray-200 w-[95%] mx-auto">
+    <div className="flex flex-col w-[95%] mx-auto">
       <ModalCheckoutButton
-        onLoading={openLoader}
+        onLoading={isLoading}
         onConfirm={handleModalConfirm}
-        onOpenChange={() => {
-          if (!openLoader) {
-            onOpenChange()
-          }
-        }}
+        onOpenChange={onOpenChange}
         isOpen={isOpen}
-        isLoaded={openLoader}
+        isLoaded={isLoading}
+        pendingChecked={pendingChecked}
+        errorMessage={errorMessage}
       />
       <div
         className="flex justify-between items-center py-4 cursor-pointer"
@@ -99,7 +82,7 @@ const AccordionItem = ({
           {item.section} ({indexesSum} / {item.items.length})
         </span>
         <button
-          aria-label={isAccordionOpen ? "Collapse" : "Expand"}
+          aria-label="toggle button"
           className={`transition-transform duration-300 ${
             isAccordionOpen ? "rotate-90" : "rotate-0"
           }`}
@@ -113,9 +96,9 @@ const AccordionItem = ({
           isAccordionOpen ? "max-h-screen" : "max-h-0"
         }`}
       >
-        <ol className="list-decimal list-inside">
+        <ol>
           {item.items.map((subItem, index) => (
-            <div key={index} className="flex">
+            <li key={index} className="flex">
               <Checkbox
                 onChange={handleCheckboxChange(index)}
                 isSelected={!!item.checked[index]}
@@ -123,14 +106,14 @@ const AccordionItem = ({
                 color="default"
                 type="checkbox"
               />
-              <li
+              <span
                 className={`text-base mb-2 font-normal ${
                   item.checked[index] ? "text-[#A1A1AA] line-through" : ""
                 }`}
               >
-                {subItem}
-              </li>
-            </div>
+                {index + 1}. {subItem}
+              </span>
+            </li>
           ))}
         </ol>
       </div>

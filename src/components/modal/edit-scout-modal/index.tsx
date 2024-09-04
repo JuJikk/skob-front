@@ -10,13 +10,14 @@ import {
 import { useUserStore } from "../../../lib/auth/useUser.ts"
 import {
   editUserData,
-  useFindDataByEmail,
+  useFindAllData,
   useFindUserDataByEmail,
 } from "../../../lib/data"
 import React, { useState } from "react"
 import { Formik, FormikHelpers } from "formik"
 import EditForm from "./FormComp.tsx"
-import { validationEditScoutSchema } from "../../../types/yupSchemas.ts"
+import { validationEditScoutSchema } from "../../../utils/validation/yupSchemas.ts"
+import Loader from "../../common/loader"
 
 interface ModalWindowProps {
   isOpen: boolean
@@ -33,11 +34,11 @@ const ModalEditScout: React.FC<ModalWindowProps> = ({
   onOpenChange,
 }) => {
   const [currentUserEmail, setCurrentUserEmail] = useState<string>("")
-  const [showErrorMessage, setShowErrorMessage] = useState(false)
+  const [errorMessage, setErrorMessage] = useState("")
   const { user } = useUserStore((state) => ({
     user: state.user,
   }))
-  const { data: userData } = useFindDataByEmail()
+  const { data: userData } = useFindAllData()
 
   const onConfirm = async (
     values: FormValues,
@@ -46,11 +47,18 @@ const ModalEditScout: React.FC<ModalWindowProps> = ({
     try {
       await editUserData(currentUserEmail, values.name, values.sex)
       setCurrentUserEmail("")
-      setShowErrorMessage(false)
+      setErrorMessage("")
       onOpenChange()
       actions.setSubmitting(false)
-    } catch {
-      setShowErrorMessage(true)
+    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      const errorMessage = e.response.data.message
+      if (Array.isArray(errorMessage)) {
+        setErrorMessage(errorMessage[0])
+      } else {
+        setErrorMessage(errorMessage)
+      }
     }
   }
 
@@ -59,7 +67,7 @@ const ModalEditScout: React.FC<ModalWindowProps> = ({
   }
 
   const handeClose = () => {
-    setShowErrorMessage(false)
+    setErrorMessage("")
     setCurrentUserEmail("")
     onOpenChange()
   }
@@ -67,11 +75,13 @@ const ModalEditScout: React.FC<ModalWindowProps> = ({
   const { data: currentUserData, isLoading: isUserLoading } =
     useFindUserDataByEmail(currentUserEmail)
 
+  const whosText = !currentUserEmail ? "чиї" : "які"
+
   return (
     <Modal placement="center" isOpen={isOpen} onOpenChange={handeClose}>
       <ModalContent>
         <ModalHeader className="flex flex-col gap-1 mx-auto pb-0">
-          <span className="mb-4">Виберіть чиї дані ви хочете змінити</span>
+          <span className="mb-4">Виберіть {whosText} дані ви хочете змінити</span>
         </ModalHeader>
         <ModalFooter className="flex justify-center flex-col items-center pt-0">
           {!currentUserEmail ? (
@@ -97,7 +107,7 @@ const ModalEditScout: React.FC<ModalWindowProps> = ({
               </Button>
             </>
           ) : isUserLoading ? (
-            <div>Завантаження...</div>
+            <Loader label="Завантаження..." />
           ) : (
             <Formik
               initialValues={{
@@ -115,11 +125,13 @@ const ModalEditScout: React.FC<ModalWindowProps> = ({
                     onOpenChange={onOpenChange}
                     setCurrentUserEmail={setCurrentUserEmail}
                   />
-                  {showErrorMessage && (
-                    <span className="text-danger text-medium font-normal my-1">
-                      Ви не можете підписати цю пробу не завершивши попередню
+                  <div className="h-[1.5rem]">
+                    {errorMessage && (
+                      <span className="text-danger text-medium font-normal my-1">
+                     {errorMessage}
                     </span>
-                  )}
+                    )}
+                  </div>
                 </>
               )}
             </Formik>

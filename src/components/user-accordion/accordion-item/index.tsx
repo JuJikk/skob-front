@@ -17,18 +17,18 @@ const AccordionItem = ({ item }: ScoutProps) => {
   };
 
   return (
-    <div className="flex flex-col border-b border-gray-200 w-[95%] mx-auto">
+    <div className="flex flex-col w-[95%] mx-auto">
       <div
         className="flex justify-between items-center py-4 cursor-pointer"
         onClick={toggleAccordion}
         role="button"
-        aria-label={`Toggle ${item.section}`}
+        aria-label="toggle accordion"
       >
         <span className="text-base font-medium md:font-semibold">
           {item.section} ({indaxesSum} / {item.items.length})
         </span>
         <button
-          aria-label="Collapse/Expand"
+          aria-label="toggle accordion button"
           className={`transition-transform duration-300 ${
             isOpen ? "rotate-90" : "rotate-0"
           }`}

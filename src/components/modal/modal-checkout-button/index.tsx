@@ -13,6 +13,8 @@ interface ModalWindowProps {
   onConfirm: () => void
   onLoading: boolean
   isLoaded: boolean
+  pendingChecked: boolean | null
+  errorMessage: string
 }
 
 const ModalCheckoutButton: React.FC<ModalWindowProps> = ({
@@ -21,12 +23,23 @@ const ModalCheckoutButton: React.FC<ModalWindowProps> = ({
   onOpenChange,
   onLoading,
   isLoaded,
+  pendingChecked,
+  errorMessage,
 }) => {
+  const signProba = pendingChecked ? "Підписати" : "Відписати"
+
   return (
     <Modal placement="center" isOpen={isOpen} onOpenChange={onOpenChange}>
       <ModalContent>
-        <ModalHeader className="flex flex-col gap-1 mx-auto">
-          Підписати точку
+        <ModalHeader className="flex flex-col pb-0 items-center gap-1 mx-auto">
+          {signProba} точку
+          <div className="h-[1.5rem] flex items-start">
+            {errorMessage && (
+              <span className="text-danger text-sm font-normal">
+                {errorMessage}
+              </span>
+            )}
+          </div>
         </ModalHeader>
         <ModalFooter className="flex justify-center">
           <Button
@@ -35,7 +48,7 @@ const ModalCheckoutButton: React.FC<ModalWindowProps> = ({
             className="bg-gray-900 font-bold !w-full h-12 md:w-fit text-base text-white px-8 rounded-xl"
             onPress={onConfirm}
           >
-            Підписати
+            {signProba}
           </Button>
           <Button
             variant="bordered"

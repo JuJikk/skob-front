@@ -1,5 +1,7 @@
 import * as Yup from "yup"
 
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export const validationEditScoutSchema = Yup.object({
     sex: Yup.string()
       .oneOf(["MALE", "FEMALE"], "Виберіть правильну стать")
@@ -15,6 +17,6 @@ export const validationGenderModalSchema = Yup.object({
 
 export const validationSchemaAddUser = Yup.object({
     email: Yup.string()
-      .email("Неправильний формат електронної пошти")
+      .matches(emailRegex, "Неправильний формат електронної пошти")
       .required("Електронна пошта обов'язкова"),
-})
+});
