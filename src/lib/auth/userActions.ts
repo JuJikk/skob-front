@@ -5,11 +5,13 @@ import axios from "axios";
 const BACKEND_URL: string = import.meta.env.VITE_BACKEND_URL as string;
 
 export const signOut = async (): Promise<void> => {
-  location.reload();
   try {
-    await axios.get(`${BACKEND_URL}/auth/logout`, {
-      withCredentials: true,
+    const responce = await axios.get(`${BACKEND_URL}/auth/logout`, {
+      withCredentials: true
     });
+    if (responce.status === 200) {
+      location.reload();
+    }
   } catch (error: unknown) {
     if (error instanceof Error) {
       throw new Error(`Failed to sign out: ${error.message}`);

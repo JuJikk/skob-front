@@ -35,7 +35,6 @@ const AccordionComponent: React.FC = () => {
   } = useFindUserDataByEmail(currentUserEmailToFetch);
 
   const handleLoadUserData = useCallback(() => {
-    console.log("refetched")
     const loadedSteps = loadUserData({ currentUserData });
     setSteps(loadedSteps);
   }, [currentUserData]);
