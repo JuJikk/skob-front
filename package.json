@@ -5,10 +5,12 @@
   "packageManager": "pnpm@9.7.1",
   "type": "module",
   "scripts": {
+    "start": "vite preview --port 5173",
     "dev": "vite",
-    "build": "vite build --base=/my/public/path/",
+    "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "serve": "pnpm build && vite preview"
   },
   "dependencies": {
     "@medusajs/icons": "^1.2.2",
