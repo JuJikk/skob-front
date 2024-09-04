@@ -2,6 +2,9 @@ import { Button } from "@nextui-org/react"
 import { Google } from "@medusajs/icons"
 
 const LoginPage: React.FC = () => {
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-white px-4">
@@ -14,7 +17,7 @@ const LoginPage: React.FC = () => {
           </p>
         </div>
 
-        <a href="http://localhost:3000/auth/google">
+        <a href={`${BACKEND_URL}/auth/google`}>
           <Button
             variant="bordered"
             className="bg-white font-bold text-base text-gray-900 px-8 mt-4 w-full rounded-xl border-gray-900 border-2"
