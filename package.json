@@ -2,6 +2,7 @@
   "name": "proba_new",
   "private": true,
   "version": "0.0.0",
+  "packageManager": "pnpm@9.7.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
