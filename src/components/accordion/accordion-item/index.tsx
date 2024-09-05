@@ -3,7 +3,6 @@ import { Checkbox, useDisclosure } from "@nextui-org/react"
 import { CaretDown } from "@phosphor-icons/react"
 import ModalCheckoutButton from "../../modal/modal-checkout-button"
 import { Props } from "../../../types/accordion.ts"
-import { updateProbaStatus } from "../../../lib/data"
 
 const AccordionItem = ({
   item,
@@ -11,14 +10,12 @@ const AccordionItem = ({
   currentStep,
   refetchData,
 }: Props) => {
-  const [isLoading, setIsLoading] = useState(false)
   const [isAccordionOpen, setIsAccordionOpen] = useState(false)
   const descriptionRef = useRef<HTMLDivElement>(null)
   const [indexesSum, setIndexesSum] = useState(0)
   const [pendingIndex, setPendingIndex] = useState<number | null>(null)
   const [pendingChecked, setPendingChecked] = useState<boolean | null>(null)
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
-  const [errorMessage, setErrorMessage] = useState("")
 
   useEffect(() => {
     setIndexesSum(item.checked.reduce((acc, num) => acc + num, 0))
@@ -31,48 +28,20 @@ const AccordionItem = ({
       onOpen()
     }
 
-  const handleModalConfirm = async () => {
-    if (pendingIndex !== null && pendingChecked !== null) {
-      setIsLoading(true)
-      try {
-        await updateProbaStatus(
-          currentProbaEmail,
-          item.probaType,
-          currentStep,
-          pendingIndex,
-          pendingChecked ? 1 : 0
-        )
-        item.checked[pendingIndex] = pendingChecked ? 1 : 0
-        setIndexesSum(item.checked.reduce((acc, num) => acc + num, 0))
-        onOpenChange()
-        setIsLoading(false)
-        refetchData()
-      } catch (e) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        const errorMessage = e.response.data.message
-        setIsLoading(false)
-        if (Array.isArray(errorMessage)) {
-          setErrorMessage(errorMessage[0])
-        } else {
-          setErrorMessage(errorMessage)
-        }
-      }
-    }
-  }
-
   const toggleAccordion = () => setIsAccordionOpen(!isAccordionOpen)
 
   return (
     <div className="flex flex-col w-[95%] mx-auto">
       <ModalCheckoutButton
-        onLoading={isLoading}
-        onConfirm={handleModalConfirm}
         onOpenChange={onOpenChange}
         isOpen={isOpen}
-        isLoaded={isLoading}
+        refetchData={refetchData}
+        currentStep={currentStep}
+        currentProbaEmail={currentProbaEmail}
+        item={item}
+        pendingIndex={pendingIndex}
         pendingChecked={pendingChecked}
-        errorMessage={errorMessage}
+        setIndexesSum={setIndexesSum}
       />
       <div
         className="flex justify-between items-center py-4 cursor-pointer"

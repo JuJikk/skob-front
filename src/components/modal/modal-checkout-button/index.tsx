@@ -5,28 +5,70 @@ import {
   ModalFooter,
   ModalHeader,
 } from "@nextui-org/react"
-import React from "react"
+import React, { Dispatch, useState } from "react"
+import { updateProbaStatus } from "../../../lib/data"
 
 interface ModalWindowProps {
   isOpen: boolean
   onOpenChange: () => void
-  onConfirm: () => void
-  onLoading: boolean
-  isLoaded: boolean
   pendingChecked: boolean | null
-  errorMessage: string
+  pendingIndex: number | null
+  currentProbaEmail: string
+  refetchData: () => void
+  currentStep: string
+  setIndexesSum: Dispatch<React.SetStateAction<number>>
+  item:  {
+    section: string;
+    items: string[];
+    checked: number[];
+    probaType: string;
+  }
 }
 
 const ModalCheckoutButton: React.FC<ModalWindowProps> = ({
   isOpen,
-  onConfirm,
   onOpenChange,
-  onLoading,
-  isLoaded,
   pendingChecked,
-  errorMessage,
+  pendingIndex,
+  currentProbaEmail,
+  currentStep,
+  refetchData,
+  item,
+  setIndexesSum,
 }) => {
+  const [errorMessage, setErrorMessage] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
   const signProba = pendingChecked ? "Підписати" : "Відписати"
+
+  const handleModalConfirm = async () => {
+    if (pendingIndex !== null && pendingChecked !== null) {
+      setIsLoading(true)
+      try {
+        await updateProbaStatus(
+          currentProbaEmail,
+          item.probaType,
+          currentStep,
+          pendingIndex,
+          pendingChecked ? 1 : 0
+        )
+        item.checked[pendingIndex] = pendingChecked ? 1 : 0
+        setIndexesSum(item.checked.reduce((acc, num) => acc + num, 0))
+        onOpenChange()
+        setIsLoading(false)
+        refetchData()
+      } catch (e) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        const errorMessage = e.response.data.message
+        setIsLoading(false)
+        if (Array.isArray(errorMessage)) {
+          setErrorMessage(errorMessage[0])
+        } else {
+          setErrorMessage(errorMessage)
+        }
+      }
+    }
+  }
 
   return (
     <Modal placement="center" isOpen={isOpen} onOpenChange={onOpenChange}>
@@ -43,10 +85,10 @@ const ModalCheckoutButton: React.FC<ModalWindowProps> = ({
         </ModalHeader>
         <ModalFooter className="flex justify-center">
           <Button
-            isLoading={onLoading}
-            isDisabled={isLoaded}
+            isLoading={isLoading}
+            isDisabled={isLoading}
             className="bg-gray-900 font-bold !w-full h-12 md:w-fit text-base text-white px-8 rounded-xl"
-            onPress={onConfirm}
+            onPress={handleModalConfirm}
           >
             {signProba}
           </Button>
@@ -54,7 +96,7 @@ const ModalCheckoutButton: React.FC<ModalWindowProps> = ({
             variant="bordered"
             className="bg-white text-gray-900 !w-full h-12 md:w-fit text-base font-bold border-gray-900 rounded-xl"
             onPress={onOpenChange}
-            isDisabled={onLoading}
+            isDisabled={isLoading}
           >
             Скасувати
           </Button>
