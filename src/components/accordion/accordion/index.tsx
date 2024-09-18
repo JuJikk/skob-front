@@ -57,7 +57,7 @@ const AccordionComponent: React.FC = () => {
   return (
     <>
       {userData?.length > 0 && (
-        <div className="max-w-[70rem] mx-auto px-8">
+        <div className="max-w-[70rem] mx-auto px-8" id="accordion">
           <ModalAllProba
             onOpenChange={closeModal}
             isOpen={isOpen}

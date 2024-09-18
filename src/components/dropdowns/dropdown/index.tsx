@@ -33,7 +33,7 @@ const DropDown = () => {
   if (!user) return null
 
   return (
-    <div className="my-auto">
+    <div className="my-auto" id="dropdown">
       <ModalWindow
         isOpen={isOpenAddScout}
         onOpenChange={onOpenChangeAddScout}

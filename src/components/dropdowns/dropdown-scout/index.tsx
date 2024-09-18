@@ -3,21 +3,26 @@ import {
   Dropdown,
   DropdownItem,
   DropdownMenu,
-  DropdownTrigger,
+  DropdownTrigger, useDisclosure,
 } from "@nextui-org/react"
 import { useUserStore } from "../../../lib/auth/useUser.ts"
 import { signOut } from "../../../lib/auth/userActions.ts"
 import { SignOut } from "@phosphor-icons/react"
+import { ChartBar } from "@medusajs/icons"
+import ShowStatisticsModal from "../../modal/statistics-modal"
 
 const DropDownScout = () => {
   const { user } = useUserStore((state) => ({
     user: state.user,
   }))
 
+  const { isOpen, onOpen, onOpenChange } = useDisclosure()
+
   if (!user) return null
 
   return (
     <div className="my-auto">
+      <ShowStatisticsModal isOpen={isOpen} onOpenChange={onOpenChange} />
       <Dropdown placement="bottom-end">
         <DropdownTrigger>
           <Avatar
@@ -35,6 +40,15 @@ const DropDownScout = () => {
           >
             <p className="font-semibold">Вітаємо</p>
             <p className="font-semibold">{user.name}</p>
+          </DropdownItem>
+
+          <DropdownItem
+            startContent={<ChartBar className="size-6" />}
+            textValue="Show statistics"
+            key="show"
+            onClick={onOpen}
+          >
+            Показати мою статистику
           </DropdownItem>
 
           <DropdownItem

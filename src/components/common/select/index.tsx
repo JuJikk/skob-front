@@ -13,6 +13,7 @@ const UserSelect: React.FC = () => {
 
   return (
     <Select
+      id="user-select"
       label={currentUserEmail}
       onChange={handleSelectChange}
       className="p-2 max-w-60 rounded-md"
