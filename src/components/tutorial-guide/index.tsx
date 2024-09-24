@@ -1,7 +1,12 @@
 import Joyride from "react-joyride"
 import { generateSteps } from "../../lib/generate-steps"
+import { editGuideShown } from "../../lib/data"
 
-const TourGuide = () => {
+const TourGuide = ({ email }: {email?: string}) => {
+
+  if (email) {
+    editGuideShown(email)
+  }
 
   return (
     <Joyride
@@ -46,7 +51,7 @@ const TourGuide = () => {
       }}
       locale={{
         last: <span>Кінець</span>,
-        next: <span>Дальше</span>,
+        next: <span>Далі</span>,
         back: <span>Назад</span>,
       }}
     />

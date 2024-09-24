@@ -12,12 +12,19 @@ import ErrorMessage from "../../common/error-message/index.tsx"
 import ForemanNextSteps from "../../common/foreman-info-message/index.tsx"
 import Loader from "../../common/loader/index.tsx"
 import { useCompletionPercentages } from "../../../lib/calculations"
+import TourGuide from "../../tutorial-guide"
+import { useUserStore } from "../../../lib/auth/useUser.ts"
+import { useHasProbaStore } from "../../../lib/contex/isForemanHasProba.ts"
 
 const AccordionComponent: React.FC = () => {
   const [steps, setSteps] = useState<Step[]>([]);
   const { currentUserEmail, setCurrentUserEmail } = useSelectStore();
   const { data: userData, error: userError, isLoading } = useFindAllData();
   const { isOpen, closeModal, setRefetchData } = useModalStore();
+  const { setHasProba } = useHasProbaStore();
+  const { user } = useUserStore((state) => ({
+    user: state.user,
+  }))
 
   useEffect(() => {
     if (userData && userData.length > 0 && !currentUserEmail) {
@@ -36,6 +43,7 @@ const AccordionComponent: React.FC = () => {
 
   const handleLoadUserData = useCallback(() => {
     const loadedSteps = loadUserData({ currentUserData });
+    if (loadedSteps.length > 0) setHasProba()
     setSteps(loadedSteps);
   }, [currentUserData]);
 
@@ -51,13 +59,14 @@ const AccordionComponent: React.FC = () => {
 
   if (isLoading || isUserLoading)
     return <Loader label="Завантажуємо проби..." />;
-  if (userError || userDataError) return <ErrorMessage />;
   if (!currentUserData) return <ForemanNextSteps />;
+  if (userError || userDataError) return <ErrorMessage />;
 
   return (
     <>
       {userData?.length > 0 && (
         <div className="max-w-[70rem] mx-auto px-8" id="accordion">
+          {!user?.isGuideComplete && <TourGuide email={user?.email}/>}
           <ModalAllProba
             onOpenChange={closeModal}
             isOpen={isOpen}

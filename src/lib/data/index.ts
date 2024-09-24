@@ -53,6 +53,20 @@ export const editUserData = async (
   )
 }
 
+export const editGuideShown = async (
+  email: string,
+) => {
+  await axios.patch(
+    `${BACKEND_URL}/users/${email}`,
+    {
+      isGuideComplete: true
+    },
+    {
+      withCredentials: true,
+    }
+  )
+}
+
 export const updateProbaStatus = async (
   currentProbaEmail: string,
   probaName: string,

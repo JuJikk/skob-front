@@ -5,7 +5,6 @@ import GenderModal from "./components/modal/gender-modal/index.tsx"
 import AccordionUserComponent from "./components/user-accordion/accordion"
 import { useUserStore } from "./lib/auth/useUser.ts"
 import { useEffect } from "react"
-import TourGuide from "./components/tutorial-guide"
 
 function App() {
   const { user } = useUserStore((state) => ({
@@ -29,7 +28,6 @@ function App() {
         onOpenChange={onOpenChange}
       />
       <NavBar />
-      {isOpen && <TourGuide/>}
       {user?.roles[0] === "SCOUT" ? <AccordionUserComponent /> : <Accordion />}
     </>
   )

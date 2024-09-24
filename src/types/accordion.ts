@@ -14,6 +14,7 @@ export interface UserData {
     roles: string[];
     sex: string,
     picture?: string,
+    isGuideComplete: boolean,
 }
 
 export interface Step {

@@ -17,9 +17,13 @@ import {
 import { useModalStore } from "../../../lib/contex/SignAllProbaModal.ts"
 import ModalEditScout from "../../modal/edit-scout-modal"
 import ModalWindow from "../../modal/modal-add-scout"
+import { useState } from "react"
 
-const DropDown = () => {
+const DropDown = ({ isHasProba: isHasProba }: { isHasProba: boolean }) => {
   const { openModal } = useModalStore()
+  const [disabledItems] = useState<string[]>(
+    !isHasProba ? [] : ["edit", "sign"]
+  )
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const {
     isOpen: isOpenAddScout,
@@ -48,7 +52,11 @@ const DropDown = () => {
             src={user.picture ?? ""}
           />
         </DropdownTrigger>
-        <DropdownMenu aria-label="Profile Actions" variant="flat">
+        <DropdownMenu
+          disabledKeys={disabledItems}
+          aria-label="Profile Actions"
+          variant="flat"
+        >
           <DropdownItem
             key="profile"
             className="h-14 gap-2"

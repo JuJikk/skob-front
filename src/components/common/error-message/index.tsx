@@ -15,6 +15,7 @@ const ErrorMessage = () => {
       <Button
         variant="bordered"
         className="bg-white h-12 text-gray-900 text-base font-bold border-gray-900 rounded-xl"
+        onClick={() => window.location.reload()}
       >
         Кнопка
       </Button>
