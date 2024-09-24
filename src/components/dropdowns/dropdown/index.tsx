@@ -17,13 +17,11 @@ import {
 import { useModalStore } from "../../../lib/contex/SignAllProbaModal.ts"
 import ModalEditScout from "../../modal/edit-scout-modal"
 import ModalWindow from "../../modal/modal-add-scout"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 const DropDown = ({ isHasProba: isHasProba }: { isHasProba: boolean }) => {
   const { openModal } = useModalStore()
-  const [disabledItems] = useState<string[]>(
-    !isHasProba ? [] : ["edit", "sign"]
-  )
+  const [disabledItems, setDisabledItems] = useState<string[]>([])
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const {
     isOpen: isOpenAddScout,
@@ -33,6 +31,14 @@ const DropDown = ({ isHasProba: isHasProba }: { isHasProba: boolean }) => {
   const { user } = useUserStore((state) => ({
     user: state.user,
   }))
+
+  useEffect(() => {
+    if (!isHasProba) {
+      setDisabledItems(["edit", "sign"])
+    } else {
+      setDisabledItems([])
+    }
+  }, [isHasProba])
 
   if (!user) return null
 
@@ -52,11 +58,7 @@ const DropDown = ({ isHasProba: isHasProba }: { isHasProba: boolean }) => {
             src={user.picture ?? ""}
           />
         </DropdownTrigger>
-        <DropdownMenu
-          disabledKeys={disabledItems}
-          aria-label="Profile Actions"
-          variant="flat"
-        >
+        <DropdownMenu disabledKeys={disabledItems} aria-label="Profile Actions" variant="flat">
           <DropdownItem
             key="profile"
             className="h-14 gap-2"
