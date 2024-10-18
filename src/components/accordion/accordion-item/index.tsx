@@ -8,12 +8,11 @@ const AccordionItem = ({
   item,
   currentProbaEmail,
   currentStep,
-  refetchData,
 }: Props) => {
   const [isAccordionOpen, setIsAccordionOpen] = useState(false)
   const descriptionRef = useRef<HTMLDivElement>(null)
   const [indexesSum, setIndexesSum] = useState(0)
-  const [pendingIndex, setPendingIndex] = useState<number | null>(null)
+  const [pendingIndex, setPendingIndex] = useState<number>(0)
   const [pendingChecked, setPendingChecked] = useState<boolean | null>(null)
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
 
@@ -35,7 +34,6 @@ const AccordionItem = ({
       <ModalCheckoutButton
         onOpenChange={onOpenChange}
         isOpen={isOpen}
-        refetchData={refetchData}
         currentStep={currentStep}
         currentProbaEmail={currentProbaEmail}
         item={item}

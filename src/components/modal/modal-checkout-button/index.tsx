@@ -5,25 +5,10 @@ import {
   ModalFooter,
   ModalHeader,
 } from "@nextui-org/react"
-import React, { Dispatch, useState } from "react"
+import React, { useState } from "react"
 import { updateProbaStatus } from "../../../lib/data"
-
-interface ModalWindowProps {
-  isOpen: boolean
-  onOpenChange: () => void
-  pendingChecked: boolean | null
-  pendingIndex: number | null
-  currentProbaEmail: string
-  refetchData: () => void
-  currentStep: string
-  setIndexesSum: Dispatch<React.SetStateAction<number>>
-  item:  {
-    section: string;
-    items: string[];
-    checked: number[];
-    probaType: string;
-  }
-}
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { ModalWindowProps } from "../../../types/modals.ts"
 
 const ModalCheckoutButton: React.FC<ModalWindowProps> = ({
   isOpen,
@@ -32,43 +17,45 @@ const ModalCheckoutButton: React.FC<ModalWindowProps> = ({
   pendingIndex,
   currentProbaEmail,
   currentStep,
-  refetchData,
   item,
   setIndexesSum,
 }) => {
   const [errorMessage, setErrorMessage] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const signProba = pendingChecked ? "Підписати" : "Відписати"
+  const queryClient = useQueryClient()
 
-  const handleModalConfirm = async () => {
-    if (pendingIndex !== null && pendingChecked !== null) {
-      setIsLoading(true)
-      try {
-        await updateProbaStatus(
-          currentProbaEmail,
-          item.probaType,
-          currentStep,
-          pendingIndex,
-          pendingChecked ? 1 : 0
-        )
-        item.checked[pendingIndex] = pendingChecked ? 1 : 0
-        setIndexesSum(item.checked.reduce((acc, num) => acc + num, 0))
-        onOpenChange()
-        setIsLoading(false)
-        refetchData()
-      } catch (e) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        const errorMessage = e.response.data.message
-        setIsLoading(false)
-        if (Array.isArray(errorMessage)) {
-          setErrorMessage(errorMessage[0])
-        } else {
-          setErrorMessage(errorMessage)
-        }
+  const handleMutation = useMutation({
+    mutationFn: () => {
+      return updateProbaStatus(
+        currentProbaEmail,
+        item.probaType,
+        currentStep,
+        pendingIndex,
+        pendingChecked ? 1 : 0
+      )
+    },
+    onSuccess: () => {
+      item.checked[pendingIndex] = pendingChecked ? 1 : 0
+      setIndexesSum(item.checked.reduce((acc, num) => acc + num, 0))
+      onOpenChange()
+      setIsLoading(false)
+      queryClient.invalidateQueries({
+        queryKey: ["currentUserData"],
+      })
+    },
+    onError: (error) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      const errorMessage = error.response.data.message
+      setIsLoading(false)
+      if (Array.isArray(errorMessage)) {
+        setErrorMessage(errorMessage[0])
+      } else {
+        setErrorMessage(errorMessage)
       }
-    }
-  }
+    },
+  })
 
   return (
     <Modal placement="center" isOpen={isOpen} onOpenChange={onOpenChange}>
@@ -88,7 +75,10 @@ const ModalCheckoutButton: React.FC<ModalWindowProps> = ({
             isLoading={isLoading}
             isDisabled={isLoading}
             className="bg-gray-900 font-bold !w-full h-12 md:w-fit text-base text-white px-8 rounded-xl"
-            onPress={handleModalConfirm}
+            onPress={() => {
+              setIsLoading(true)
+              handleMutation.mutate()
+            }}
           >
             {signProba}
           </Button>
